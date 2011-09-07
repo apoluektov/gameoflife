@@ -58,10 +58,14 @@ def draw_cell(x,y):
     pygame.draw.rect(screen, (0,0,0), r)
 
 
-t0 = pygame.time.get_ticks()
-while True:
-    t = pygame.time.get_ticks()
-    if t - t0 >= 10:
-        g.next()
-        t0 = t
-    draw()
+def run():
+    t0 = pygame.time.get_ticks()
+    while True:
+        t = pygame.time.get_ticks()
+        if t - t0 >= 10:
+            g.next()
+            t0 = t
+        draw()
+
+
+run()
