@@ -21,7 +21,7 @@ class Generation(object):
         self.alive = new_alive
 
     def adjacent(self, x0, y0):
-        return [(x,y) for x in range(x0-1,x0+2) for y in range(y0-1,y0+2) if (x,y) != (x0,y0)]
+        return ((x,y) for x in range(x0-1,x0+2) for y in range(y0-1,y0+2) if (x,y) != (x0,y0))
 
     def adjacent_alive(self, x, y):
         return len([c for c in self.adjacent(x,y) if c in self.alive])
