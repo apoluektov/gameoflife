@@ -7,8 +7,7 @@ class Generation(object):
         self.alive = set()
 
     def add_cell(self, x, y):
-        if (x,y) not in self.alive:
-            self.alive.add((x,y))
+        self.alive.add((x,y))
         self.min_x = min(self.min_x, x)
         self.min_y = min(self.min_y, y)
         self.max_x = max(self.max_x, x)
@@ -24,10 +23,9 @@ class Generation(object):
                 new_alive.add(c)
         for c in self.alive:
             for c2 in self.adjacent(*c):
-                if c2 not in new_alive:
-                    n = self.adjacent_alive(*c2)
-                    if n == 3:
-                        new_alive.add(c2)
+                n = self.adjacent_alive(*c2)
+                if n == 3:
+                    new_alive.add(c2)
         self.alive = new_alive
 
     def adjacent(self, x0, y0):
