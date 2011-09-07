@@ -1,18 +1,10 @@
 class Generation(object):
     def __init__(self):
-        self.min_x = 0
-        self.min_y = 0
-        self.max_x = 0
-        self.max_y = 0
         self.alive = set()
 
     def add_cell(self, x, y):
         self.alive.add((x,y))
-        self.min_x = min(self.min_x, x)
-        self.min_y = min(self.min_y, y)
-        self.max_x = max(self.max_x, x)
-        self.max_y = max(self.max_y, y)
-
+ 
     def next(self):
         # 1: for all alive: find the next status
         # 2: for all adjacent to alive: find next alive
