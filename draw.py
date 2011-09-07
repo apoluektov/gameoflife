@@ -32,29 +32,29 @@ g.add_cell(-10+2,-12)
 
 def draw():
 
-    draw_board()
-    draw_generation(g)
+    draw_board(640, 480, 8)
+    draw_generation(g, 640, 480, 8)
 
     pygame.display.flip()
 
 
-def draw_board():
-    r = pygame.Rect(0, 0, 640, 480)
+def draw_board(w, h, s):
+    r = pygame.Rect(0, 0, w, h)
     pygame.draw.rect(screen,(255,255,255),r)
 
-    for x in range(0,80):
-        pygame.draw.line(screen,(220,220,220),(x*8,0),(x*8,480))
+    for x in range(0, w/s):
+        pygame.draw.line(screen,(220,220,220),(x*s,0),(x*s,h))
 
-    for y in range(0,60):
-        pygame.draw.line(screen,(220,220,220),(0,y*8),(640,y*8))
+    for y in range(0, h/s):
+        pygame.draw.line(screen,(220,220,220),(0,y*s),(w,y*s))
 
 
-def draw_generation(g):
+def draw_generation(g, w, h, s):
     for c in g.alive:
-        draw_cell(*c)
+        draw_cell(w, h, s, *c)
 
-def draw_cell(x,y):
-    r = pygame.Rect(320+x*8, 240+y*8, 7, 7)
+def draw_cell(w, h, s, x, y):
+    r = pygame.Rect(w/2 + x*s, h/2 + y*s, s-1, s-1)
     pygame.draw.rect(screen, (0,0,0), r)
 
 
