@@ -54,7 +54,7 @@ def draw_generation(g, w, h, s):
         draw_cell(w, h, s, *c)
 
 def draw_cell(w, h, s, x, y):
-    r = pygame.Rect(w/2 + x*s, h/2 + y*s, s-1, s-1)
+    r = pygame.Rect(w/2 + x*s+1, h/2 + y*s+1, s-1, s-1)
     pygame.draw.rect(screen, (0,0,0), r)
 
 
