@@ -30,37 +30,39 @@ g.add_cell(-9+2,-11)
 g.add_cell(-10+2,-12)
 
 
-def draw():
+class View:
+    def draw(self):
 
-    draw_board(640, 480, 12)
-    draw_generation(g, 640, 480, 12)
+        self.draw_board(640, 480, 12)
+        self.draw_generation(g, 640, 480, 12)
 
-    pygame.display.flip()
-
-
-def draw_board(w, h, s):
-    r = pygame.Rect(0, 0, w, h)
-    pygame.draw.rect(screen,(255,255,255),r)
-
-    for x in range(0, w/s + 1):
-        pygame.draw.line(screen,(220,220,220),(x*s,0),(x*s,h))
-
-    for y in range(0, h/s + 1):
-        pygame.draw.line(screen,(220,220,220),(0,y*s),(w,y*s))
+        pygame.display.flip()
 
 
-def draw_generation(g, w, h, s):
-    for c in g.alive:
-        draw_cell(w, h, s, *c)
+    def draw_board(self, w, h, s):
+        r = pygame.Rect(0, 0, w, h)
+        pygame.draw.rect(screen,(255,255,255),r)
 
-def draw_cell(w, h, s, x, y):
-    r = pygame.Rect((w/2)/s*s + x*s+1, (h/2)/s*s + y*s+1, s-1, s-1)
-    pygame.draw.rect(screen, (0,0,0), r)
+        for x in range(0, w/s + 1):
+            pygame.draw.line(screen,(220,220,220),(x*s,0),(x*s,h))
+
+        for y in range(0, h/s + 1):
+            pygame.draw.line(screen,(220,220,220),(0,y*s),(w,y*s))
+
+
+    def draw_generation(self, g, w, h, s):
+        for c in g.alive:
+            self.draw_cell(w, h, s, *c)
+
+    def draw_cell(self, w, h, s, x, y):
+        r = pygame.Rect((w/2)/s*s + x*s+1, (h/2)/s*s + y*s+1, s-1, s-1)
+        pygame.draw.rect(screen, (0,0,0), r)
 
 
 def run(ms_generation):
     t0 = pygame.time.get_ticks()
     pause = False
+    view = View()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -81,7 +83,7 @@ def run(ms_generation):
         if t - t0 >= ms_generation and not pause:
             g.next()
             t0 = t
-        draw()
+        view.draw()
 
 
 run(10)
