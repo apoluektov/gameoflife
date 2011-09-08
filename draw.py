@@ -60,9 +60,25 @@ def draw_cell(w, h, s, x, y):
 
 def run(ms_generation):
     t0 = pygame.time.get_ticks()
+    pause = False
     while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            elif event.type == pygame.MOUSEMOTION:
+                pass
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pass
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+                elif event.key == pygame.K_p:
+                    pause = not pause
+                elif event.key == pygame.K_SPACE:
+                    pass
+
         t = pygame.time.get_ticks()
-        if t - t0 >= ms_generation:
+        if t - t0 >= ms_generation and not pause:
             g.next()
             t0 = t
         draw()
