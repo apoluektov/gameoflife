@@ -31,38 +31,44 @@ g.add_cell(-10+2,-12)
 
 
 class View:
-    def draw(self):
+    def __init__(self, w, h, s):
+        self.width = w
+        self.height = h
+        self.cellsize = s
 
-        self.draw_board(640, 480, 12)
-        self.draw_generation(g, 640, 480, 12)
+    def draw(self):
+        self.draw_board()
+        self.draw_generation(g)
 
         pygame.display.flip()
 
 
-    def draw_board(self, w, h, s):
-        r = pygame.Rect(0, 0, w, h)
+    def draw_board(self):
+        r = pygame.Rect(0, 0, self.width, self.height)
         pygame.draw.rect(screen,(255,255,255),r)
+        s = self.cellsize
 
-        for x in range(0, w/s + 1):
-            pygame.draw.line(screen,(220,220,220),(x*s,0),(x*s,h))
+        for x in range(0, self.width/s + 1):
+            pygame.draw.line(screen,(220,220,220),(x*s,0),(x*s,self.height))
 
-        for y in range(0, h/s + 1):
-            pygame.draw.line(screen,(220,220,220),(0,y*s),(w,y*s))
+        for y in range(0, self.height/s + 1):
+            pygame.draw.line(screen,(220,220,220),(0,y*s),(self.width,y*s))
 
 
-    def draw_generation(self, g, w, h, s):
+    def draw_generation(self, g):
         for c in g.alive:
-            self.draw_cell(w, h, s, *c)
+            self.draw_cell(*c)
 
-    def draw_cell(self, w, h, s, x, y):
-        r = pygame.Rect((w/2)/s*s + x*s+1, (h/2)/s*s + y*s+1, s-1, s-1)
+    def draw_cell(self, x, y):
+        s = self.cellsize
+        r = pygame.Rect((self.width/2)/s*s + x*s+1, (self.height/2)/s*s + y*s+1, s-1, s-1)
         pygame.draw.rect(screen, (0,0,0), r)
 
 
 def run(ms_generation):
     t0 = pygame.time.get_ticks()
     pause = False
-    view = View()
+    view = View(640, 480, 12)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
