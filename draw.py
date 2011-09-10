@@ -6,16 +6,18 @@
 import pygame
 from life import *
 
-
+# responsible for drawing the generation
 class View:
     _cell_sizes = [2,3,5,8,13,21,34]
 
-    def __init__(self, w, h, z):
-        self.width = w
-        self.height = h
-        self.zoom = clamp(z, 0, len(View._cell_sizes))
-        self.screen = pygame.display.set_mode((w,h), pygame.RESIZABLE)
+    # constructs new view using given board parameters
+    def __init__(self, width, height, zoom):
+        self.width = width
+        self.height = height
+        self.zoom = clamp(zoom, 0, len(View._cell_sizes))
+        self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
 
+    # draws the board and the generation
     def draw(self):
         self.draw_board()
         self.draw_generation(g)
@@ -85,11 +87,6 @@ class View:
 def clamp(v, minv, maxv):
     return min(maxv, max(minv, v))
 
-def slower(ms):
-    return ms * 1.5
-
-def faster(ms):
-    return ms / 1.5
 
 def run(generation, ms_generation):
     pygame.init()
@@ -114,9 +111,9 @@ def run(generation, ms_generation):
                 elif event.key == pygame.K_p:
                     pause = not pause
                 elif event.key == pygame.K_s:
-                    ms_generation = slower(ms_generation)
+                    ms_generation *= 1.5
                 elif event.key == pygame.K_f:
-                    ms_generation = faster(ms_generation)
+                    ms_generation /= 1.5
                 elif event.key == pygame.K_SPACE:
                     if pause:
                         generation.next()
