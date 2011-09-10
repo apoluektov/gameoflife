@@ -73,7 +73,8 @@ class View:
         rs = s
         if s >= 4:
             rs = s-1
-        r = pygame.Rect((self.width/2)/s*s + x*s+1, (self.height/2)/s*s + y*s+1, rs, rs)
+        cx, cy = self.center()
+        r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
         pygame.draw.rect(self.screen, (0,0,0), r)
 
     def resize_board(self, w, h):
@@ -85,6 +86,10 @@ class View:
 
     def decrease_cellsize(self):
         self.zoom = max(self.zoom - 1, 0)
+
+    def center(self):
+        s = View._cell_sizes[self.zoom]
+        return ((self.width/2)/s*s, (self.height/2)/s*s)
 
 
 def slower(ms):
