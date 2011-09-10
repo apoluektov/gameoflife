@@ -54,11 +54,15 @@ class View:
     def draw_lines(self):
         s = View._cell_sizes[self.zoom]
 
+        color = (230,230,230)
+        if s < 8:
+            color = (245,245,245)
+
         for x in range(0, self.width/s + 1):
-            pygame.draw.line(screen,(220,220,220),(x*s,0),(x*s,self.height))
+            pygame.draw.line(screen,color,(x*s,0),(x*s,self.height))
 
         for y in range(0, self.height/s + 1):
-            pygame.draw.line(screen,(220,220,220),(0,y*s),(self.width,y*s))
+            pygame.draw.line(screen,color,(0,y*s),(self.width,y*s))
 
 
     def draw_generation(self, g):
