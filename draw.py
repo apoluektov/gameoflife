@@ -8,7 +8,7 @@ class View:
     def __init__(self, w, h, z):
         self.width = w
         self.height = h
-        self.zoom = z
+        self.zoom = clamp(z, 0, len(View._cell_sizes))
         self.screen = pygame.display.set_mode((w,h), pygame.RESIZABLE)
 
     def draw(self):
@@ -76,6 +76,9 @@ class View:
             color = (230,230,230)
         return color
 
+
+def clamp(v, minv, maxv):
+    return min(maxv, max(minv, v))
 
 def slower(ms):
     return ms * 1.5
