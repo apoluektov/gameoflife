@@ -3,7 +3,7 @@ import pygame
 from life import *
 
 pygame.init()
-screen = pygame.display.set_mode((640,480))
+screen = pygame.display.set_mode((640,480), pygame.RESIZABLE)
 
 
 g = Generation()
@@ -84,6 +84,9 @@ def run(ms_generation):
                     pause = not pause
                 elif event.key == pygame.K_SPACE:
                     pass
+            elif event.type == pygame.VIDEORESIZE:
+                view.width, view.height = event.w, event.h
+                screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
 
         t = pygame.time.get_ticks()
         if t - t0 >= ms_generation and not pause:
