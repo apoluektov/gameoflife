@@ -84,6 +84,12 @@ class View:
         self.zoom = max(self.zoom - 1, 0)
 
 
+def slower(ms):
+    return ms * 1.5
+
+def faster(ms):
+    return ms / 1.5
+
 def run(ms_generation):
     t0 = pygame.time.get_ticks()
     pause = False
@@ -104,6 +110,10 @@ def run(ms_generation):
                     return
                 elif event.key == pygame.K_p:
                     pause = not pause
+                elif event.key == pygame.K_s:
+                    ms_generation = slower(ms_generation)
+                elif event.key == pygame.K_f:
+                    ms_generation = faster(ms_generation)
                 elif event.key == pygame.K_SPACE:
                     pass
             elif event.type == pygame.VIDEORESIZE:
