@@ -31,10 +31,12 @@ g.add_cell(-10+2,-12)
 
 
 class View:
-    def __init__(self, w, h, s):
+    _cell_sizes = [2,3,5,8,13,21,34]
+
+    def __init__(self, w, h, z):
         self.width = w
         self.height = h
-        self.cellsize = s
+        self.zoom = z
 
     def draw(self):
         self.draw_board()
@@ -46,7 +48,11 @@ class View:
     def draw_board(self):
         r = pygame.Rect(0, 0, self.width, self.height)
         pygame.draw.rect(screen,(255,255,255),r)
-        s = self.cellsize
+        if View._cell_sizes[self.zoom] >= 4:
+            self.draw_lines()
+
+    def draw_lines(self):
+        s = View._cell_sizes[self.zoom]
 
         for x in range(0, self.width/s + 1):
             pygame.draw.line(screen,(220,220,220),(x*s,0),(x*s,self.height))
@@ -60,15 +66,24 @@ class View:
             self.draw_cell(*c)
 
     def draw_cell(self, x, y):
-        s = self.cellsize
-        r = pygame.Rect((self.width/2)/s*s + x*s+1, (self.height/2)/s*s + y*s+1, s-1, s-1)
+        s = View._cell_sizes[self.zoom]
+        rs = s
+        if s >= 4:
+            rs = s-1
+        r = pygame.Rect((self.width/2)/s*s + x*s+1, (self.height/2)/s*s + y*s+1, rs, rs)
         pygame.draw.rect(screen, (0,0,0), r)
+
+    def increase_cellsize(self):
+        self.zoom = min(self.zoom + 1, len(View._cell_sizes)-1)
+
+    def decrease_cellsize(self):
+        self.zoom = max(self.zoom - 1, 0)
 
 
 def run(ms_generation):
     t0 = pygame.time.get_ticks()
     pause = False
-    view = View(640, 480, 12)
+    view = View(640, 480, 3)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -76,7 +91,10 @@ def run(ms_generation):
             elif event.type == pygame.MOUSEMOTION:
                 pass
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+                if event.button == 5:
+                    view.increase_cellsize()
+                elif event.button == 4:
+                    view.decrease_cellsize()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
