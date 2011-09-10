@@ -1,5 +1,4 @@
 import pygame
-
 from life import *
 
 pygame.init()
@@ -43,7 +42,6 @@ class View:
 
         pygame.display.flip()
 
-
     def draw_board(self):
         r = pygame.Rect(0, 0, self.width, self.height)
         pygame.draw.rect(self.screen,(255,255,255),r)
@@ -61,7 +59,6 @@ class View:
 
         for y in range(0, self.height/s + 1):
             pygame.draw.line(self.screen,color,(0,y*s),(self.width,y*s))
-
 
     def draw_generation(self, g):
         for c in g.alive:
