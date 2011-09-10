@@ -47,15 +47,14 @@ class View:
     def draw_board(self):
         r = pygame.Rect(0, 0, self.width, self.height)
         pygame.draw.rect(self.screen,(255,255,255),r)
-        if self.cell_size() >= 4:
-            self.draw_lines()
+        self.draw_lines()
 
     def draw_lines(self):
         s = self.cell_size()
 
-        color = (230,230,230)
-        if s < 8:
-            color = (245,245,245)
+        color = self.line_color()
+        if color == (255,255,255):
+            return
 
         for x in range(0, self.width/s + 1):
             pygame.draw.line(self.screen,color,(x*s,0),(x*s,self.height))
@@ -93,6 +92,17 @@ class View:
 
     def cell_size(self):
         return View._cell_sizes[self.zoom]
+
+    def line_color(self):
+        s = self.cell_size()
+        color = (0,0,0)
+        if  s < 4:
+            color = (255,255,255)
+        elif s < 8:
+            color = (245,245,245)
+        else:
+            color = (230,230,230)
+        return color
 
 
 def slower(ms):
