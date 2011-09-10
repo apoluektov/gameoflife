@@ -47,11 +47,11 @@ class View:
     def draw_board(self):
         r = pygame.Rect(0, 0, self.width, self.height)
         pygame.draw.rect(self.screen,(255,255,255),r)
-        if View._cell_sizes[self.zoom] >= 4:
+        if self.cell_size() >= 4:
             self.draw_lines()
 
     def draw_lines(self):
-        s = View._cell_sizes[self.zoom]
+        s = self.cell_size()
 
         color = (230,230,230)
         if s < 8:
@@ -69,7 +69,7 @@ class View:
             self.draw_cell(*c)
 
     def draw_cell(self, x, y):
-        s = View._cell_sizes[self.zoom]
+        s = self.cell_size()
         rs = s
         if s >= 4:
             rs = s-1
@@ -88,8 +88,11 @@ class View:
         self.zoom = max(self.zoom - 1, 0)
 
     def center(self):
-        s = View._cell_sizes[self.zoom]
+        s = self.cell_size()
         return ((self.width/2)/s*s, (self.height/2)/s*s)
+
+    def cell_size(self):
+        return View._cell_sizes[self.zoom]
 
 
 def slower(ms):
