@@ -3,8 +3,6 @@ import pygame
 from life import *
 
 pygame.init()
-screen = pygame.display.set_mode((640,480), pygame.RESIZABLE)
-
 
 g = Generation()
 g.add_cell(0,0)
@@ -37,6 +35,7 @@ class View:
         self.width = w
         self.height = h
         self.zoom = z
+        self.screen = pygame.display.set_mode((w,h), pygame.RESIZABLE)
 
     def draw(self):
         self.draw_board()
@@ -47,7 +46,7 @@ class View:
 
     def draw_board(self):
         r = pygame.Rect(0, 0, self.width, self.height)
-        pygame.draw.rect(screen,(255,255,255),r)
+        pygame.draw.rect(self.screen,(255,255,255),r)
         if View._cell_sizes[self.zoom] >= 4:
             self.draw_lines()
 
@@ -59,10 +58,10 @@ class View:
             color = (245,245,245)
 
         for x in range(0, self.width/s + 1):
-            pygame.draw.line(screen,color,(x*s,0),(x*s,self.height))
+            pygame.draw.line(self.screen,color,(x*s,0),(x*s,self.height))
 
         for y in range(0, self.height/s + 1):
-            pygame.draw.line(screen,color,(0,y*s),(self.width,y*s))
+            pygame.draw.line(self.screen,color,(0,y*s),(self.width,y*s))
 
 
     def draw_generation(self, g):
@@ -75,7 +74,11 @@ class View:
         if s >= 4:
             rs = s-1
         r = pygame.Rect((self.width/2)/s*s + x*s+1, (self.height/2)/s*s + y*s+1, rs, rs)
-        pygame.draw.rect(screen, (0,0,0), r)
+        pygame.draw.rect(self.screen, (0,0,0), r)
+
+    def resize_board(self, w, h):
+        self.width, self.height = w, h
+        self.screen = pygame.display.set_mode((w,h), pygame.RESIZABLE)
 
     def increase_cellsize(self):
         self.zoom = min(self.zoom + 1, len(View._cell_sizes)-1)
@@ -118,8 +121,7 @@ def run(ms_generation):
                     if pause:
                         g.next()
             elif event.type == pygame.VIDEORESIZE:
-                view.width, view.height = event.w, event.h
-                screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
+                view.resize_board(event.w, event.h)
 
         t = pygame.time.get_ticks()
         if t - t0 >= ms_generation and not pause:
@@ -128,4 +130,4 @@ def run(ms_generation):
         view.draw()
 
 
-run(10)
+run(50)
