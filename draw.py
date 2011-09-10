@@ -1,31 +1,6 @@
 import pygame
 from life import *
 
-pygame.init()
-
-g = Generation()
-g.add_cell(0,0)
-g.add_cell(0,1)
-g.add_cell(0,2)
-g.add_cell(1,1)
-g.add_cell(1,2)
-g.add_cell(1,0)
-g.add_cell(2,0)
-g.add_cell(2,1)
-g.add_cell(2,2)
-g.add_cell(3,0)
-g.add_cell(3,1)
-g.add_cell(3,2)
-g.add_cell(4,0)
-g.add_cell(4,1)
-g.add_cell(4,2)
-
-g.add_cell(-11+2,-10)
-g.add_cell(-10+2,-10)
-g.add_cell(-9+2,-10)
-g.add_cell(-9+2,-11)
-g.add_cell(-10+2,-12)
-
 
 class View:
     _cell_sizes = [2,3,5,8,13,21,34]
@@ -108,7 +83,9 @@ def slower(ms):
 def faster(ms):
     return ms / 1.5
 
-def run(ms_generation):
+def run(generation, ms_generation):
+    pygame.init()
+
     t0 = pygame.time.get_ticks()
     pause = False
     view = View(640, 480, 3)
@@ -134,15 +111,40 @@ def run(ms_generation):
                     ms_generation = faster(ms_generation)
                 elif event.key == pygame.K_SPACE:
                     if pause:
-                        g.next()
+                        generation.next()
             elif event.type == pygame.VIDEORESIZE:
                 view.resize_board(event.w, event.h)
 
         t = pygame.time.get_ticks()
         if t - t0 >= ms_generation and not pause:
-            g.next()
+            generation.next()
             t0 = t
         view.draw()
 
 
-run(50)
+
+g = Generation()
+g.add_cell(0,0)
+g.add_cell(0,1)
+g.add_cell(0,2)
+g.add_cell(1,1)
+g.add_cell(1,2)
+g.add_cell(1,0)
+g.add_cell(2,0)
+g.add_cell(2,1)
+g.add_cell(2,2)
+g.add_cell(3,0)
+g.add_cell(3,1)
+g.add_cell(3,2)
+g.add_cell(4,0)
+g.add_cell(4,1)
+g.add_cell(4,2)
+
+g.add_cell(-11+2,-10)
+g.add_cell(-10+2,-10)
+g.add_cell(-9+2,-10)
+g.add_cell(-9+2,-11)
+g.add_cell(-10+2,-12)
+
+
+run(g, 50)
