@@ -1,0 +1,12 @@
+Demonstration of Conway's Game of Life
+
+Controls:
+F                 faster
+S                 slower
+P                 pause/resume
+SPACE             next generation while in pause
+ESC               quit
+mousewheel up     zoom out
+mousewheel down   zoom in
+
+See http://en.wikipedia.org/wiki/Conway_game_of_life for game rules.
