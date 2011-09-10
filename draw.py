@@ -115,7 +115,8 @@ def run(ms_generation):
                 elif event.key == pygame.K_f:
                     ms_generation = faster(ms_generation)
                 elif event.key == pygame.K_SPACE:
-                    pass
+                    if pause:
+                        g.next()
             elif event.type == pygame.VIDEORESIZE:
                 view.width, view.height = event.w, event.h
                 screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
