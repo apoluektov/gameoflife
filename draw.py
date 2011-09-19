@@ -17,6 +17,9 @@ class View:
         self.zoom = clamp(zoom, 0, len(View._cell_sizes))
         self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
         self.font = pygame.font.Font(None, 36)
+        s = self.cell_size()
+        self.center = ((self.width/2)/s*s, (self.height/2)/s*s)
+
 
     # draws the board and the generation
     def draw(self):
@@ -53,7 +56,7 @@ class View:
         rs = s
         if s >= 4:
             rs = s-1
-        cx, cy = self.center()
+        cx, cy = self.center
         r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
         pygame.draw.rect(self.screen, (0,0,0), r)
 
@@ -72,10 +75,6 @@ class View:
 
     def decrease_cellsize(self):
         self.zoom = max(self.zoom - 1, 0)
-
-    def center(self):
-        s = self.cell_size()
-        return ((self.width/2)/s*s, (self.height/2)/s*s)
 
     def cell_size(self):
         return View._cell_sizes[self.zoom]
@@ -101,18 +100,27 @@ def run(generation, ms_generation):
 
     t0 = pygame.time.get_ticks()
     pause = False
+    mouse_down = False
     view = View(640, 480, 3)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
             elif event.type == pygame.MOUSEMOTION:
-                pass
+                if mouse_down:
+                    x, y = view.center
+                    dx, dy = event.rel
+                    view.center = x+dx, y+dy
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 5:
                     view.increase_cellsize()
                 elif event.button == 4:
                     view.decrease_cellsize()
+                elif event.button == 3:
+                    mouse_down = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 3:
+                    mouse_down = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
