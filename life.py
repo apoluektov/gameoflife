@@ -7,6 +7,7 @@
 class Generation(object):
     def __init__(self):
         self.alive = set()
+        self.nstep = 0
 
     def add_cell(self, x, y):
         self.alive.add((x,y))
@@ -27,6 +28,7 @@ class Generation(object):
                     new_alive.add(c2)
 
         self.alive = new_alive
+        self.nstep += 1
 
     # for the given cell returns the list of adjacent cells
     def adjacent(self, x0, y0):

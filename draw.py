@@ -16,11 +16,13 @@ class View:
         self.height = height
         self.zoom = clamp(zoom, 0, len(View._cell_sizes))
         self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
+        self.font = pygame.font.Font(None, 36)
 
     # draws the board and the generation
     def draw(self):
         self.draw_board()
         self.draw_generation(g)
+        self.draw_text(g.nstep)
 
         pygame.display.flip()
 
@@ -54,6 +56,12 @@ class View:
         cx, cy = self.center()
         r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
         pygame.draw.rect(self.screen, (0,0,0), r)
+
+    def draw_text(self, n):
+        text = self.font.render('{0:{f}6}'.format(n, f='0'), 1, (190,190,190))
+        x, y = text.get_size()
+        x, y = self.width - x - 10, 10
+        self.screen.blit(text, (x,y))
 
     def resize_board(self, w, h):
         self.width, self.height = w, h
