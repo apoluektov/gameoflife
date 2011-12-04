@@ -1,7 +1,7 @@
 # Copyright (c) 2011 Alexander Poluektov (alexander.poluektov@gmail.com)
 #
 # Use, modification and distribution are subject to the MIT license
-# (See accompanyung file MIT-LICENSE)
+# (See accompanying file MIT-LICENSE)
 
 # represents all cells on the game board
 class Generation(object):
