@@ -20,6 +20,7 @@ class View:
         self.font = pygame.font.Font(None, 36)
         s = self.cell_size()
         self.center = ((self.width/2)/s*s, (self.height/2)/s*s)
+        self.cursor = (0,0)
 
 
     # draws the board and the generation
@@ -42,11 +43,14 @@ class View:
         if color == (255,255,255):
             return
 
+        cx, cy = self.center
+        dx, dy = cx % s, cy % s
+
         for x in range(0, self.width/s + 1):
-            pygame.draw.line(self.screen,color,(x*s,0),(x*s,self.height))
+            pygame.draw.line(self.screen,color, (x*s + dx, 0), (x*s + dx, self.height))
 
         for y in range(0, self.height/s + 1):
-            pygame.draw.line(self.screen,color,(0,y*s),(self.width,y*s))
+            pygame.draw.line(self.screen, color, (0, y*s + dy), (self.width, y*s + dy))
 
     def draw_generation(self, g):
         for c in g.alive:
@@ -62,10 +66,20 @@ class View:
         pygame.draw.rect(self.screen, (0,0,0), r)
 
     def draw_text(self, n):
-        text = self.font.render('{0:{f}6}'.format(n, f='0'), 1, (190,190,190))
-        x, y = text.get_size()
+        nstep_text = self.font.render('{0:06}'.format(n), 1, (190,190,190))
+        x, y = nstep_text.get_size()
         x, y = self.width - x - 10, 10
-        self.screen.blit(text, (x,y))
+        self.screen.blit(nstep_text, (x,y))
+
+        sx, sy = self.cursor
+        cx, cy = self.center
+        s = self.cell_size()
+        if sx > 0 and sx < self.width-1 and sy > 0 and sy < self.height-1:
+            gx, gy = (sx - cx) / s, (sy - cy) / s
+            coords_text = self.font.render('{0:+04}:{1:+04}'.format(gx, gy), 1, (190,190,190))
+            x, y = coords_text.get_size()
+            x, y = self.width - x - 10, y + 20
+            self.screen.blit(coords_text, (x,y))
 
     def resize_board(self, w, h):
         self.width, self.height = w, h
@@ -112,15 +126,16 @@ def run(generation, ms_generation):
                     x, y = view.center
                     dx, dy = event.rel
                     view.center = x+dx, y+dy
+                view.cursor = event.pos
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 5:
                     view.increase_cellsize()
                 elif event.button == 4:
                     view.decrease_cellsize()
-                elif event.button == 3:
+                elif event.button == 1:
                     mouse_down = True
             elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 3:
+                if event.button == 1:
                     mouse_down = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
