@@ -5,6 +5,7 @@
 
 import pygame
 from life import *
+import figures
 
 # responsible for drawing the generation
 class View:
@@ -22,7 +23,7 @@ class View:
 
 
     # draws the board and the generation
-    def draw(self):
+    def draw(self, g):
         self.draw_board()
         self.draw_generation(g)
         self.draw_text(g.nstep)
@@ -140,32 +141,13 @@ def run(generation, ms_generation):
         if t - t0 >= ms_generation and not pause:
             generation.next()
             t0 = t
-        view.draw()
+        view.draw(generation)
 
 
-
-g = Generation()
-g.add_cell(0,0)
-g.add_cell(0,1)
-g.add_cell(0,2)
-g.add_cell(1,1)
-g.add_cell(1,2)
-g.add_cell(1,0)
-g.add_cell(2,0)
-g.add_cell(2,1)
-g.add_cell(2,2)
-g.add_cell(3,0)
-g.add_cell(3,1)
-g.add_cell(3,2)
-g.add_cell(4,0)
-g.add_cell(4,1)
-g.add_cell(4,2)
-
-g.add_cell(-11+2,-10)
-g.add_cell(-10+2,-10)
-g.add_cell(-9+2,-10)
-g.add_cell(-9+2,-11)
-g.add_cell(-10+2,-12)
+def main():
+    g = figures.complex()
+    run(g, 50)
 
 
-run(g, 50)
+if __name__ == '__main__':
+    main()
