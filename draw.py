@@ -53,17 +53,22 @@ class View:
             pygame.draw.line(self.screen, color, (0, y*s + dy), (self.width, y*s + dy))
 
     def draw_generation(self, g):
-        for c in g.alive:
-            self.draw_cell(*c)
+        for x in range(g.left, g.right):
+            for y in range(g.bottom, g.top):
+                self.draw_cell(x, y, g.cells[x][y])
 
-    def draw_cell(self, x, y):
+    def draw_cell(self, x, y, alive):
         s = self.cell_size()
         rs = s
         if s >= 4:
             rs = s-1
         cx, cy = self.center
+        if alive == 1:
+            color = (0,0,0)
+        else:
+            color = (255,255,255)
         r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
-        pygame.draw.rect(self.screen, (0,0,0), r)
+        pygame.draw.rect(self.screen, color, r)
 
     def draw_text(self, n):
         nstep_text = self.font.render('{0:06}'.format(n), 1, (190,190,190))
@@ -114,7 +119,7 @@ def run(generation, ms_generation):
     pygame.init()
 
     t0 = pygame.time.get_ticks()
-    pause = False
+    pause = True
     mouse_down = False
     view = View(640, 480, 3)
     while True:

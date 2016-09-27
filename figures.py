@@ -6,7 +6,7 @@
 from life import *
 
 def block():
-    g = Generation()
+    g = Generation((-10,-10), (10,10))
 
     g.add_cell(0,0)
     g.add_cell(0,1)
@@ -17,7 +17,7 @@ def block():
 
 
 def glider():
-    g = Generation()
+    g = Generation((-10,-10), (10,10))
 
     g.add_cell(0,1)
     g.add_cell(1,2)
@@ -29,7 +29,7 @@ def glider():
 
 
 def complex():
-    g = Generation()
+    g = Generation((-50,-50), (50,50))
 
     g.add_cell(0,0)
     g.add_cell(0,1)
