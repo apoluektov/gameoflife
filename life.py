@@ -5,9 +5,20 @@
 
 # represents all cells on the game board
 class Generation(object):
-    def __init__(self):
+    def __init__(self, code='B3/S23'):
         self.alive = set()
         self.nstep = 0
+        self.born_counts, self.survive_counts = self._decode(code)
+
+    def _decode(self, code):
+        born, survives = code.split('/')
+        if born[0] != 'B' or survives[0] != 'S':
+            raise ValueError('invalide code')
+        born_counts = [int(c) for c in born[1:]]
+        survive_counts = [int(c) for c in survives[1:]]
+        if max(born_counts) > 8 or max(survive_counts) > 8:
+            raise ValueError('invalid code')
+        return born_counts, survive_counts
 
     def add_cell(self, x, y):
         self.alive.add((x,y))
@@ -18,13 +29,14 @@ class Generation(object):
         new_alive = set()
         for c in self.alive:
             n = self.number_of_adjacent_alive(*c)
-            if n == 2 or n == 3:
+            if n in self.survive_counts:
                 new_alive.add(c)
 
         # 2: for all adjacent to alive: find newborns
         for c in self.alive:
             for c2 in self.adjacent(*c):
-                if self.number_of_adjacent_alive(*c2) == 3:
+                n = self.number_of_adjacent_alive(*c2)
+                if n in self.born_counts:
                     new_alive.add(c2)
 
         self.alive = new_alive
