@@ -22,6 +22,9 @@ class Generation(object):
 
     def add_cell(self, x, y):
         self.alive.add((x,y))
+
+    def remove_cell(self, x, y):
+        self.alive.remove((x,y))
  
     # calculates next generation
     def next(self):

@@ -12,7 +12,8 @@ class View:
     _cell_sizes = [2,3,5,8,13,21,34]
 
     # constructs new view using given board parameters
-    def __init__(self, width, height, zoom):
+    def __init__(self, gen, width, height, zoom):
+        self.gen = gen
         self.width = width
         self.height = height
         self.zoom = clamp(zoom, 0, len(View._cell_sizes))
@@ -24,10 +25,10 @@ class View:
 
 
     # draws the board and the generation
-    def draw(self, g):
+    def draw(self):
         self.draw_board()
-        self.draw_generation(g)
-        self.draw_text(g.nstep)
+        self.draw_generation()
+        self.draw_text()
 
         pygame.display.flip()
 
@@ -52,8 +53,8 @@ class View:
         for y in range(0, self.height/s + 1):
             pygame.draw.line(self.screen, color, (0, y*s + dy), (self.width, y*s + dy))
 
-    def draw_generation(self, g):
-        for c in g.alive:
+    def draw_generation(self):
+        for c in self.gen.alive:
             self.draw_cell(*c)
 
     def draw_cell(self, x, y):
@@ -65,21 +66,28 @@ class View:
         r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
         pygame.draw.rect(self.screen, (0,0,0), r)
 
-    def draw_text(self, n):
-        nstep_text = self.font.render('{0:06}'.format(n), 1, (190,190,190))
+    def draw_text(self):
+        nstep_text = self.font.render('{0:06}'.format(self.gen.nstep), 1, (190,190,190))
         x, y = nstep_text.get_size()
         x, y = self.width - x - 10, 10
         self.screen.blit(nstep_text, (x,y))
 
-        sx, sy = self.cursor
-        cx, cy = self.center
-        s = self.cell_size()
-        if sx > 0 and sx < self.width-1 and sy > 0 and sy < self.height-1:
-            gx, gy = (sx - cx) / s, (sy - cy) / s
+        cell = self.screen_coords_to_cell(*self.cursor)
+        if cell:
+            gx, gy = cell
             coords_text = self.font.render('{0:+04}:{1:+04}'.format(gx, gy), 1, (190,190,190))
             x, y = coords_text.get_size()
             x, y = self.width - x - 10, y + 20
             self.screen.blit(coords_text, (x,y))
+
+    def screen_coords_to_cell(self, sx, sy):
+        cx, cy = self.center
+        s = self.cell_size()
+        if sx > 0 and sx < self.width-1 and sy > 0 and sy < self.height-1:
+            gx, gy = (sx - cx) / s, (sy - cy) / s
+            return gx, gy
+        else:
+            return None
 
     def resize_board(self, w, h):
         self.width, self.height = w, h
@@ -105,6 +113,17 @@ class View:
             color = (230,230,230)
         return color
 
+    def set_cell_under_cursor_alive(self, alive):
+        cell = self.screen_coords_to_cell(*self.cursor)
+        if cell:
+            gx, gy = cell
+            if alive == 1:
+                self.gen.add_cell(gx, gy)
+            elif alive == 0:
+                self.gen.remove_cell(gx, gy)
+            else:
+                raise ValueError('View.set_cell_under_cursor_alive() argument must be 0 or 1; got %s' % alive)
+
 
 def clamp(v, minv, maxv):
     return min(maxv, max(minv, v))
@@ -116,7 +135,7 @@ def run(generation, ms_generation):
     t0 = pygame.time.get_ticks()
     pause = False
     mouse_down = False
-    view = View(640, 480, 3)
+    view = View(generation, 640, 480, 3)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -149,6 +168,12 @@ def run(generation, ms_generation):
                 elif event.key == pygame.K_SPACE:
                     if pause:
                         generation.next()
+                elif event.key == pygame.K_1:
+                    if pause:
+                        view.set_cell_under_cursor_alive(1)
+                elif event.key == pygame.K_0:
+                    if pause:
+                        view.set_cell_under_cursor_alive(0)
             elif event.type == pygame.VIDEORESIZE:
                 view.resize_board(event.w, event.h)
 
@@ -156,7 +181,7 @@ def run(generation, ms_generation):
         if t - t0 >= ms_generation and not pause:
             generation.next()
             t0 = t
-        view.draw(generation)
+        view.draw()
 
 
 def main():
