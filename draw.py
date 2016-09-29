@@ -7,13 +7,29 @@ import pygame
 from life import *
 import figures
 
+
+class Board(object):
+    def cell_color(self, x, y):
+        return (255, 255, 255)
+
+    def set_cell_color(self, x, y, color):
+        pass
+
+    def next_step(self):
+        pass
+
+    def step_count(self):
+        return 0
+
+
 # responsible for drawing the generation
 class View:
     _cell_sizes = [2,3,5,8,13,21,34]
 
     # constructs new view using given board parameters
-    def __init__(self, gen, width, height, zoom):
-        self.gen = gen
+    # board parameter must model Board class shown above
+    def __init__(self, board, width, height, zoom):
+        self.board = board
         self.width = width
         self.height = height
         self.zoom = clamp(zoom, 0, len(View._cell_sizes))
@@ -26,16 +42,16 @@ class View:
 
     # draws the board and the generation
     def draw(self):
+        self.draw_background()
         self.draw_board()
-        self.draw_generation()
+        self.draw_lines()
         self.draw_text()
 
         pygame.display.flip()
 
-    def draw_board(self):
+    def draw_background(self):
         r = pygame.Rect(0, 0, self.width, self.height)
         pygame.draw.rect(self.screen,(255,255,255),r)
-        self.draw_lines()
 
     def draw_lines(self):
         s = self.cell_size()
@@ -53,21 +69,23 @@ class View:
         for y in range(0, self.height/s + 1):
             pygame.draw.line(self.screen, color, (0, y*s + dy), (self.width, y*s + dy))
 
-    def draw_generation(self):
-        for c in self.gen.alive:
-            self.draw_cell(*c)
+    def draw_board(self):
+        c0x, c0y = self.screen_coords_to_cell(1, 1)
+        c1x, c1y = self.screen_coords_to_cell(self.width - 2, self.height - 2)
+        for x in range(c0x, c1x + 1):
+            for y in range(c0y, c1y + 1):
+                color = self.board.cell_color(x, y)
+                self.draw_cell(x, y, color)
 
-    def draw_cell(self, x, y):
+    def draw_cell(self, x, y, color):
         s = self.cell_size()
         rs = s
-        if s >= 4:
-            rs = s-1
         cx, cy = self.center
         r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
-        pygame.draw.rect(self.screen, (0,0,0), r)
+        pygame.draw.rect(self.screen, color, r)
 
     def draw_text(self):
-        nstep_text = self.font.render('{0:06}'.format(self.gen.nstep), 1, (190,190,190))
+        nstep_text = self.font.render('{0:06}'.format(self.board.step_count()), 1, (190,190,190))
         x, y = nstep_text.get_size()
         x, y = self.width - x - 10, 10
         self.screen.blit(nstep_text, (x,y))
@@ -81,6 +99,9 @@ class View:
             self.screen.blit(coords_text, (x,y))
 
     def screen_coords_to_cell(self, sx, sy):
+        # we exclude the border of the view
+        # this is needed to being able to detect whether the screen cursor is in or out
+        # (it is clamped by pygame to the view border)
         cx, cy = self.center
         s = self.cell_size()
         if sx > 0 and sx < self.width-1 and sy > 0 and sy < self.height-1:
@@ -113,16 +134,11 @@ class View:
             color = (230,230,230)
         return color
 
-    def set_cell_under_cursor_alive(self, alive):
+    def set_cell_color_under_cursor(self, color):
         cell = self.screen_coords_to_cell(*self.cursor)
         if cell:
             gx, gy = cell
-            if alive == 1:
-                self.gen.add_cell(gx, gy)
-            elif alive == 0:
-                self.gen.remove_cell(gx, gy)
-            else:
-                raise ValueError('View.set_cell_under_cursor_alive() argument must be 0 or 1; got %s' % alive)
+            self.board.set_cell_color(gx, gy, color)
 
 
 def clamp(v, minv, maxv):
@@ -170,16 +186,16 @@ def run(generation, ms_generation):
                         generation.next()
                 elif event.key == pygame.K_1:
                     if pause:
-                        view.set_cell_under_cursor_alive(1)
+                        view.set_cell_color_under_cursor((0,0,0))
                 elif event.key == pygame.K_0:
                     if pause:
-                        view.set_cell_under_cursor_alive(0)
+                        view.set_cell_color_under_cursor((255,255,255))
             elif event.type == pygame.VIDEORESIZE:
                 view.resize_board(event.w, event.h)
 
         t = pygame.time.get_ticks()
         if t - t0 >= ms_generation and not pause:
-            generation.next()
+            generation.next_step()
             t0 = t
         view.draw()
 

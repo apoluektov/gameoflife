@@ -20,14 +20,20 @@ class Generation(object):
             raise ValueError('invalid code')
         return born_counts, survive_counts
 
-    def add_cell(self, x, y):
-        self.alive.add((x,y))
+    def cell_color(self, x, y):
+        if (x,y) in self.alive:
+            return (0, 0, 0)
+        else:
+            return (255, 255, 255)
 
-    def remove_cell(self, x, y):
-        self.alive.remove((x,y))
- 
+    def set_cell_color(self, x, y, color):
+        if color == (0, 0, 0):
+            self.add_cell(x, y)
+        elif color == (255, 255, 255):
+            self.remove_cell(x, y)
+
     # calculates next generation
-    def next(self):
+    def next_step(self):
         # 1: for all alive: find the next status
         new_alive = set()
         for c in self.alive:
@@ -45,6 +51,15 @@ class Generation(object):
         self.alive = new_alive
         self.nstep += 1
 
+    def step_count(self):
+        return self.nstep
+
+    def add_cell(self, x, y):
+        self.alive.add((x,y))
+
+    def remove_cell(self, x, y):
+        self.alive.remove((x,y))
+ 
     # for the given cell returns the list of adjacent cells
     def adjacent(self, x0, y0):
         return ((x,y) for x in range(x0-1,x0+2) for y in range(y0-1,y0+2) if (x,y) != (x0,y0))
