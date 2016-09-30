@@ -35,6 +35,8 @@ class View:
     # constructs new view using given board parameters
     # board parameter must model Board class shown above
     def __init__(self, board, style, width, height, zoom):
+        pygame.init()
+
         self.board = board
         self.style = style
         self.width = width
@@ -45,6 +47,63 @@ class View:
         s = self.cell_size()
         self.center = ((self.width/2)/s*s, (self.height/2)/s*s)
         self.cursor = (0,0)
+        self.pause = False
+        self.mouse_down = False
+        self.quit_requested = False
+
+    def run(self, step_time_ms):
+        self.step_time_ms = step_time_ms
+        t0 = pygame.time.get_ticks()
+        while True:
+            for event in pygame.event.get():
+                self.process_event(event)
+
+            if self.quit_requested:
+                return
+
+            t = pygame.time.get_ticks()
+            if t - t0 >= self.step_time_ms and not self.pause:
+                self.board.next_step()
+                t0 = t
+            self.draw()
+
+    def process_event(self, event):
+        if event.type == pygame.QUIT:
+            self.quit_requested = True
+        elif event.type == pygame.MOUSEMOTION:
+            if self.mouse_down:
+                x, y = self.center
+                dx, dy = event.rel
+                self.center = x+dx, y+dy
+            self.cursor = event.pos
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 5:
+                self.increase_cellsize()
+            elif event.button == 4:
+                self.decrease_cellsize()
+            elif event.button == 1:
+                self.mouse_down = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.mouse_down = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.quit_requested = True
+            elif event.key == pygame.K_p:
+                self.pause = not self.pause
+            elif event.key == pygame.K_s:
+                self.step_time_ms *= 1.5
+            elif event.key == pygame.K_f:
+                self.step_time_ms /= 1.5
+            elif event.key == pygame.K_SPACE:
+                if self.pause:
+                    self.board.next_step()
+            elif event.key >= pygame.K_0 and event.key <= pygame.K_9:
+                state = event.key - pygame.K_0
+                if self.pause:
+                    self.set_cell_state_under_cursor(state)
+        elif event.type == pygame.VIDEORESIZE:
+            self.resize_board(event.w, event.h)
 
 
     # draws the board and the board
@@ -152,63 +211,11 @@ def clamp(v, minv, maxv):
     return min(maxv, max(minv, v))
 
 
-def run(board, style, step_time_ms):
-    pygame.init()
-
-    t0 = pygame.time.get_ticks()
-    pause = False
-    mouse_down = False
-    view = View(board, style, 640, 480, 3)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
-            elif event.type == pygame.MOUSEMOTION:
-                if mouse_down:
-                    x, y = view.center
-                    dx, dy = event.rel
-                    view.center = x+dx, y+dy
-                view.cursor = event.pos
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 5:
-                    view.increase_cellsize()
-                elif event.button == 4:
-                    view.decrease_cellsize()
-                elif event.button == 1:
-                    mouse_down = True
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    mouse_down = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return
-                elif event.key == pygame.K_p:
-                    pause = not pause
-                elif event.key == pygame.K_s:
-                    step_time_ms *= 1.5
-                elif event.key == pygame.K_f:
-                    step_time_ms /= 1.5
-                elif event.key == pygame.K_SPACE:
-                    if pause:
-                        board.next_step()
-                elif event.key >= pygame.K_0 and event.key <= pygame.K_9:
-                    state = event.key - pygame.K_0
-                    if pause:
-                        view.set_cell_state_under_cursor(state)
-            elif event.type == pygame.VIDEORESIZE:
-                view.resize_board(event.w, event.h)
-
-        t = pygame.time.get_ticks()
-        if t - t0 >= step_time_ms and not pause:
-            board.next_step()
-            t0 = t
-        view.draw()
-
-
 def main():
     g = figures.complex()
     s = life.Style()
-    run(g, s, 50)
+    view = View(g, s, 640, 480, 3)
+    view.run(200)
 
 
 if __name__ == '__main__':
