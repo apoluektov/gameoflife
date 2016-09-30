@@ -4,8 +4,6 @@
 # (See accompanying file MIT-LICENSE)
 
 import pygame
-import life
-import figures
 
 
 class Board(object):
@@ -209,14 +207,3 @@ class View:
 
 def clamp(v, minv, maxv):
     return min(maxv, max(minv, v))
-
-
-def main():
-    g = figures.complex()
-    s = life.Style()
-    view = View(g, s, 640, 480, 3)
-    view.run(200)
-
-
-if __name__ == '__main__':
-    main()

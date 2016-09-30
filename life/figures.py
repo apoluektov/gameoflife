@@ -3,10 +3,10 @@
 # Use, modification and distribution are subject to the MIT license
 # (See accompanying file MIT-LICENSE)
 
-from life import *
+from life.board import *
 
 def block():
-    g = Generation()
+    g = Board()
 
     g.add_cell(0,0)
     g.add_cell(0,1)
@@ -17,7 +17,7 @@ def block():
 
 
 def glider():
-    g = Generation()
+    g = Board()
 
     g.add_cell(0,1)
     g.add_cell(1,2)
@@ -29,7 +29,7 @@ def glider():
 
 
 def complex():
-    g = Generation()
+    g = Board()
 
     g.add_cell(0,0)
     g.add_cell(0,1)

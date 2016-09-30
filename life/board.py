@@ -3,8 +3,8 @@
 # Use, modification and distribution are subject to the MIT license
 # (See accompanying file MIT-LICENSE)
 
-# represents all cells on the game board
-class Generation(object):
+# represents the game board
+class Board(object):
     def __init__(self, code='B3/S23'):
         self.alive = set()
         self.nstep = 0
