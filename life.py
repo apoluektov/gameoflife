@@ -20,16 +20,16 @@ class Generation(object):
             raise ValueError('invalid code')
         return born_counts, survive_counts
 
-    def cell_color(self, x, y):
+    def cell_state(self, x, y):
         if (x,y) in self.alive:
-            return (0, 0, 0)
+            return 1
         else:
-            return (255, 255, 255)
+            return 0
 
-    def set_cell_color(self, x, y, color):
-        if color == (0, 0, 0):
+    def set_cell_state(self, x, y, st):
+        if st == 1:
             self.add_cell(x, y)
-        elif color == (255, 255, 255):
+        elif st == 0:
             self.remove_cell(x, y)
 
     # calculates next generation
@@ -67,3 +67,11 @@ class Generation(object):
     # for the given cell returns the number of alive cells
     def number_of_adjacent_alive(self, x, y):
         return len([c for c in self.adjacent(x,y) if c in self.alive])
+
+
+class Style(object):
+    def color_for(self, state):
+        if state == 0:
+            return (255,255,255)
+        elif state == 1:
+            return (0,0,0)

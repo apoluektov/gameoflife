@@ -4,15 +4,16 @@
 # (See accompanying file MIT-LICENSE)
 
 import pygame
-from life import *
+import life
 import figures
 
 
 class Board(object):
-    def cell_color(self, x, y):
-        return (255, 255, 255)
+    def cell_state(self, x, y):
+        return 0
 
-    def set_cell_color(self, x, y, color):
+    # unsupported states should be ignored by the implementations
+    def set_cell_state(self, x, y, st):
         pass
 
     def next_step(self):
@@ -22,14 +23,20 @@ class Board(object):
         return 0
 
 
-# responsible for drawing the generation
+class Style:
+    def color_for(self, state):
+        return (255, 255, 255)
+
+
+# responsible for drawing the board
 class View:
     _cell_sizes = [2,3,5,8,13,21,34]
 
     # constructs new view using given board parameters
     # board parameter must model Board class shown above
-    def __init__(self, board, width, height, zoom):
+    def __init__(self, board, style, width, height, zoom):
         self.board = board
+        self.style = style
         self.width = width
         self.height = height
         self.zoom = clamp(zoom, 0, len(View._cell_sizes))
@@ -40,7 +47,7 @@ class View:
         self.cursor = (0,0)
 
 
-    # draws the board and the generation
+    # draws the board and the board
     def draw(self):
         self.draw_background()
         self.draw_board()
@@ -74,7 +81,7 @@ class View:
         c1x, c1y = self.screen_coords_to_cell(self.width - 2, self.height - 2)
         for x in range(c0x, c1x + 1):
             for y in range(c0y, c1y + 1):
-                color = self.board.cell_color(x, y)
+                color = self.style.color_for(self.board.cell_state(x, y))
                 self.draw_cell(x, y, color)
 
     def draw_cell(self, x, y, color):
@@ -134,24 +141,24 @@ class View:
             color = (230,230,230)
         return color
 
-    def set_cell_color_under_cursor(self, color):
+    def set_cell_state_under_cursor(self, st):
         cell = self.screen_coords_to_cell(*self.cursor)
         if cell:
             gx, gy = cell
-            self.board.set_cell_color(gx, gy, color)
+            self.board.set_cell_state(gx, gy, st)
 
 
 def clamp(v, minv, maxv):
     return min(maxv, max(minv, v))
 
 
-def run(generation, ms_generation):
+def run(board, style, step_time_ms):
     pygame.init()
 
     t0 = pygame.time.get_ticks()
     pause = False
     mouse_down = False
-    view = View(generation, 640, 480, 3)
+    view = View(board, style, 640, 480, 3)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -178,31 +185,30 @@ def run(generation, ms_generation):
                 elif event.key == pygame.K_p:
                     pause = not pause
                 elif event.key == pygame.K_s:
-                    ms_generation *= 1.5
+                    step_time_ms *= 1.5
                 elif event.key == pygame.K_f:
-                    ms_generation /= 1.5
+                    step_time_ms /= 1.5
                 elif event.key == pygame.K_SPACE:
                     if pause:
-                        generation.next()
-                elif event.key == pygame.K_1:
+                        board.next_step()
+                elif event.key >= pygame.K_0 and event.key <= pygame.K_9:
+                    state = event.key - pygame.K_0
                     if pause:
-                        view.set_cell_color_under_cursor((0,0,0))
-                elif event.key == pygame.K_0:
-                    if pause:
-                        view.set_cell_color_under_cursor((255,255,255))
+                        view.set_cell_state_under_cursor(state)
             elif event.type == pygame.VIDEORESIZE:
                 view.resize_board(event.w, event.h)
 
         t = pygame.time.get_ticks()
-        if t - t0 >= ms_generation and not pause:
-            generation.next_step()
+        if t - t0 >= step_time_ms and not pause:
+            board.next_step()
             t0 = t
         view.draw()
 
 
 def main():
     g = figures.complex()
-    run(g, 50)
+    s = life.Style()
+    run(g, s, 50)
 
 
 if __name__ == '__main__':
