@@ -58,7 +58,8 @@ class Board(object):
         self.alive.add((x,y))
 
     def remove_cell(self, x, y):
-        self.alive.remove((x,y))
+        if (x,y) in self.alive:
+            self.alive.remove((x,y))
  
     # for the given cell returns the list of adjacent cells
     def adjacent(self, x0, y0):
