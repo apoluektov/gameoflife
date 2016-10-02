@@ -45,7 +45,6 @@ class View:
         s = self.cell_size()
         self.center = ((self.width/2)/s*s, (self.height/2)/s*s)
         self.cursor = (0,0)
-        self.pause = False
         self.mouse_down = False
         self.quit_requested = False
 
