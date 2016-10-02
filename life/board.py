@@ -13,11 +13,18 @@ class Board(object):
     def _decode(self, code):
         born, survives = code.split('/')
         if born[0] != 'B' or survives[0] != 'S':
-            raise ValueError('invalide code')
+            raise ValueError('invalide code: malformed')
         born_counts = [int(c) for c in born[1:]]
         survive_counts = [int(c) for c in survives[1:]]
-        if max(born_counts) > 8 or max(survive_counts) > 8:
-            raise ValueError('invalid code')
+        if born_counts:
+            if max(born_counts) == 9:
+                raise ValueError('invalid code: cell cannot have 9 neighbors')
+            if min(born_counts) == 0:
+                raise ValueError('invalid code: zero neighbors born is not supported')
+        if survive_counts:
+            if max(survive_counts) == 9:
+                raise ValueError('invalid code: cell cannot have 9 neighbors')
+
         return born_counts, survive_counts
 
     def cell_state(self, x, y):
