@@ -5,52 +5,58 @@
 
 from life.board import *
 
+
+def add_figure(board, f):
+    for x,y in f:
+        board.add_cell(x,y)
+
+
 def block():
-    g = Board()
+    c = []
 
-    g.add_cell(0,0)
-    g.add_cell(0,1)
-    g.add_cell(1,0)
-    g.add_cell(1,1)
+    c.append((0,0))
+    c.append((0,1))
+    c.append((1,0))
+    c.append((1,1))
 
-    return g
+    return c
 
 
 def glider():
-    g = Board()
+    c = []
 
-    g.add_cell(0,1)
-    g.add_cell(1,2)
-    g.add_cell(2,0)
-    g.add_cell(2,1)
-    g.add_cell(2,2)
+    c.append((0,1))
+    c.append((1,2))
+    c.append((2,0))
+    c.append((2,1))
+    c.append((2,2))
 
-    return g
+    return c
 
 
 def complex():
-    g = Board()
+    c = []
 
-    g.add_cell(0,0)
-    g.add_cell(0,1)
-    g.add_cell(0,2)
-    g.add_cell(1,1)
-    g.add_cell(1,2)
-    g.add_cell(1,0)
-    g.add_cell(2,0)
-    g.add_cell(2,1)
-    g.add_cell(2,2)
-    g.add_cell(3,0)
-    g.add_cell(3,1)
-    g.add_cell(3,2)
-    g.add_cell(4,0)
-    g.add_cell(4,1)
-    g.add_cell(4,2)
+    c.append((0,0))
+    c.append((0,1))
+    c.append((0,2))
+    c.append((1,1))
+    c.append((1,2))
+    c.append((1,0))
+    c.append((2,0))
+    c.append((2,1))
+    c.append((2,2))
+    c.append((3,0))
+    c.append((3,1))
+    c.append((3,2))
+    c.append((4,0))
+    c.append((4,1))
+    c.append((4,2))
 
-    g.add_cell(-11+2,-10)
-    g.add_cell(-10+2,-10)
-    g.add_cell(-9+2,-10)
-    g.add_cell(-9+2,-11)
-    g.add_cell(-10+2,-12)
+    c.append((-11+2,-10))
+    c.append((-10+2,-10))
+    c.append((-9+2,-10))
+    c.append((-9+2,-11))
+    c.append((-10+2,-12))
 
-    return g
+    return c

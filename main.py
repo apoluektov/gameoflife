@@ -8,9 +8,10 @@ import life.figures
 import view
 
 def main():
-    b = life.figures.complex()
+    board = life.Board()
+    life.figures.add_figure(board, life.figures.complex())
     s = life.Style()
-    v = view.View(b, s, 640, 480, 3)
+    v = view.View(board, s, 640, 480, 3)
     v.run(200)
 
 
