@@ -16,7 +16,7 @@ argparser.add_argument('--code', default='B3/S23', help='born/survives game code
 def main():
     args = argparser.parse_args()
     board = life.Board(args.code)
-    life.figures.add_figure(board, life.figures.complex)
+    life.figures.add_figure(board, life.figures.collision)
     s = life.Style()
     v = view.View(board, s, 640, 480, 3)
     v.pause = args.pause
