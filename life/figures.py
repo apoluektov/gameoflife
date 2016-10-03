@@ -5,58 +5,53 @@
 
 from life.board import *
 
-
 def add_figure(board, f):
-    for x,y in f:
+    for x,y in parse(f):
         board.add_cell(x,y)
 
+block = '''
+X X
+X X
+'''
 
-def block():
-    c = []
+glider = '''
+- X _
+X - -
+X X X
+'''
 
-    c.append((0,0))
-    c.append((0,1))
-    c.append((1,0))
-    c.append((1,1))
+hive = '''
+- X -
+X - X
+X - X
+- X -
+'''
 
-    return c
+complex = '''
+- X - - - - - - - - - - -
+- - X - - - - - - - - - -
+X X X - - - X - - - - - -
+- - - - - X - X - - - - -
+- - - - - X - X - - - - -
+- - - - - - X - - - - - -
+- - - - - - - - - - - - -
+- X X - - - - - - - X X -
+X - - X - - - - - X - - X
+- X X - - - - - - - X X -
+- - - - - - - - - - - - -
+- - - - - - X - - - - - -
+- - - - - X - X - - - - -
+- - - - - X - X - - - - -
+- - - - - - X - - - - - -
+'''
 
 
-def glider():
-    c = []
-
-    c.append((0,1))
-    c.append((1,2))
-    c.append((2,0))
-    c.append((2,1))
-    c.append((2,2))
-
-    return c
-
-
-def complex():
-    c = []
-
-    c.append((0,0))
-    c.append((0,1))
-    c.append((0,2))
-    c.append((1,1))
-    c.append((1,2))
-    c.append((1,0))
-    c.append((2,0))
-    c.append((2,1))
-    c.append((2,2))
-    c.append((3,0))
-    c.append((3,1))
-    c.append((3,2))
-    c.append((4,0))
-    c.append((4,1))
-    c.append((4,2))
-
-    c.append((-11+2,-10))
-    c.append((-10+2,-10))
-    c.append((-9+2,-10))
-    c.append((-9+2,-11))
-    c.append((-10+2,-12))
-
-    return c
+def parse(s):
+    cells = []
+    lines = s.strip().split('\n')
+    for y,l in enumerate(lines):
+        l = ''.join(l.split())
+        for x,c in enumerate(l):
+            if c == 'X':
+                cells.append((x,y))
+    return cells
