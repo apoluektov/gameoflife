@@ -21,21 +21,23 @@ class Board(object):
         return 0
 
 
-class Style(object):
-    def cell_color(self, state):
-        if state == 0:
-            return (255,255,255)
-        elif state == 1:
-            return (0,0,0)
+class DefaultStyle(object):
+    # subclasses must define the method that returns color for the cell state:
+    # def cell_color(self, state)
 
     def background_color(self):
         return (255,255,255)
 
     def grid_color(self, cell_size):
-        return (245,245,245)
+        if  cell_size < 4:
+            return (255,255,255)
+        elif cell_size < 8:
+            return (245,245,245)
+        else:
+            return (230,230,230)
 
     def text_color(self):
-        return (0,0,0)
+        return (190,190,190)
 
 
 # responsible for drawing the board
