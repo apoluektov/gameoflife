@@ -75,11 +75,3 @@ class Board(object):
     # for the given cell returns the number of alive cells
     def number_of_adjacent_alive(self, x, y):
         return len([c for c in self.adjacent(x,y) if c in self.alive])
-
-
-class Style(object):
-    def color_for(self, state):
-        if state == 0:
-            return (255,255,255)
-        elif state == 1:
-            return (0,0,0)

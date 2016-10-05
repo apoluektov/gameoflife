@@ -21,9 +21,21 @@ class Board(object):
         return 0
 
 
-class Style:
-    def color_for(self, state):
-        return (255, 255, 255)
+class Style(object):
+    def cell_color(self, state):
+        if state == 0:
+            return (255,255,255)
+        elif state == 1:
+            return (0,0,0)
+
+    def background_color(self):
+        return (255,255,255)
+
+    def grid_color(self, cell_size):
+        return (245,245,245)
+
+    def text_color(self):
+        return (0,0,0)
 
 
 # responsible for drawing the board
@@ -45,6 +57,7 @@ class View:
         s = self.cell_size()
         self.center = ((self.width/2)/s*s, (self.height/2)/s*s)
         self.cursor = (0,0)
+        self.pause = False
         self.mouse_down = False
         self.quit_requested = False
 
@@ -107,20 +120,20 @@ class View:
     def draw(self):
         self.draw_background()
         self.draw_board()
-        self.draw_lines()
+        self.draw_grid()
         self.draw_text()
 
         pygame.display.flip()
 
     def draw_background(self):
         r = pygame.Rect(0, 0, self.width, self.height)
-        pygame.draw.rect(self.screen,(255,255,255),r)
+        pygame.draw.rect(self.screen, self.style.background_color(), r)
 
-    def draw_lines(self):
+    def draw_grid(self):
         s = self.cell_size()
 
-        color = self.line_color()
-        if color == (255,255,255):
+        color = self.style.grid_color(self.cell_size())
+        if color == self.style.background_color():
             return
 
         cx, cy = self.center
@@ -137,7 +150,7 @@ class View:
         c1x, c1y = self.screen_coords_to_cell(self.width - 2, self.height - 2)
         for x in range(c0x, c1x + 1):
             for y in range(c0y, c1y + 1):
-                color = self.style.color_for(self.board.cell_state(x, y))
+                color = self.style.cell_color(self.board.cell_state(x, y))
                 self.draw_cell(x, y, color)
 
     def draw_cell(self, x, y, color):
@@ -148,7 +161,7 @@ class View:
         pygame.draw.rect(self.screen, color, r)
 
     def draw_text(self):
-        nstep_text = self.font.render('{0:06}'.format(self.board.step_count()), 1, (190,190,190))
+        nstep_text = self.font.render('{0:06}'.format(self.board.step_count()), 1, self.style.text_color())
         x, y = nstep_text.get_size()
         x, y = self.width - x - 10, 10
         self.screen.blit(nstep_text, (x,y))
@@ -156,7 +169,7 @@ class View:
         cell = self.screen_coords_to_cell(*self.cursor)
         if cell:
             gx, gy = cell
-            coords_text = self.font.render('{0:+04}:{1:+04}'.format(gx, gy), 1, (190,190,190))
+            coords_text = self.font.render('{0:+04}:{1:+04}'.format(gx, gy), 1, self.style.text_color())
             x, y = coords_text.get_size()
             x, y = self.width - x - 10, y + 20
             self.screen.blit(coords_text, (x,y))
@@ -185,17 +198,6 @@ class View:
 
     def cell_size(self):
         return View._cell_sizes[self.zoom]
-
-    def line_color(self):
-        s = self.cell_size()
-        color = (0,0,0)
-        if  s < 4:
-            color = (255,255,255)
-        elif s < 8:
-            color = (245,245,245)
-        else:
-            color = (230,230,230)
-        return color
 
     def set_cell_state_under_cursor(self, st):
         cell = self.screen_coords_to_cell(*self.cursor)
