@@ -4,9 +4,10 @@
 # (See accompanying file MIT-LICENSE)
 
 from life.board import *
+from collections import defaultdict
 
 def add_figure(board, name):
-    f = catalog[name]
+    f = catalog.by_name[name]
     for x,y in f.cells:
         board.add_cell(x,y)
 
@@ -22,23 +23,38 @@ def parse(s):
     return cells
 
 
-catalog = dict()
+class Catalog(object):
+    def __init__(self):
+        self.by_name = dict()
+        self.by_category = defaultdict(list)
+
+    def add_figure(self, figure):
+        self.by_name[figure.name] = figure
+        for n in figure.alt:
+            self.by_name[n] = figure
+
+        self.by_category[figure.category].append(figure)
+
+
+catalog = Catalog()
+
 
 class Figure(object):
-    def __init__(self, name, text_repr, alt=None):
+    def __init__(self, name, text_repr, alt=None, category='miscellaneous'):
+        self.name = name
         self.alt = alt
         if not self.alt:
             self.alt = []
-        self.name = name
+        self.category = category
         self.cells = parse(text_repr)
-        catalog[self.name] = self
-        for n in self.alt:
-            catalog[n] = self
 
-def list_figures():
+        catalog.add_figure(self)
+
+
+def list_figures_by_category():
     res = []
-    for k,v in catalog.items():
-        res.append((k,v.alt))
+    for cat, fs in catalog.by_category.items():
+        res.append((cat, fs))
     return res
 
 
@@ -47,44 +63,44 @@ def list_figures():
 Figure('block', '''
 X X
 X X
-''')
+''', category='still life')
 
 Figure('behive', '''
 - X -
 X - X
 X - X
 - X -
-''')
+''', category='still life')
 
 Figure('loaf', '''
 - X X -
 X - - X
 - X - X
 - - X -
-''')
+''', category='still life')
 
 Figure('boat', '''
 X X -
 X - X
 - X -
-''')
+''', category='still life')
 
 
 # oscillators
 
-Figure('blinker', 'X X X')
+Figure('blinker', 'X X X', category='oscillators')
 
 Figure('toad', '''
 - X X X
 X X X -
-''')
+''', category='oscillators')
 
 Figure('beacon', '''
 X X - -
 X X - -
 - - X X
 - - X X
-''')
+''', category='oscillators')
 
 Figure('pulsar', '''
 - - X X X - - - X X X - -
@@ -100,7 +116,7 @@ X - - - - X - X - - - - X
 X - - - - X - X - - - - X
 - - - - - - - - - - - - -
 - - X X X - - - X X X - -
-''')
+''', category='oscillators')
 
 Figure('pentadecathlon', '''
 - X -
@@ -113,7 +129,7 @@ X - X
 X - X
 - X -
 - X -
-''')
+''', category='oscillators')
 
 # spaceships
 
@@ -121,7 +137,7 @@ Figure('glider', '''
 - X -
 X - -
 X X X
-''')
+''', category='spaceships')
 
 Figure('lightweight-spaceship', '''
 X - - X -
@@ -129,27 +145,27 @@ X - - X -
 X - - - X
 - X X X X
 ''',
-alt=['lwss'])
+alt=['lwss'], category='spaceships')
 
-# complex life
+# explosive life
 
 Figure('r-pentomino', '''
 - X X
 X X -
 - X -
-''')
+''', category='explosive life')
 
 Figure('diehard', '''
 - - - - - - X -
 X X - - - - - -
 - X - - - X X X
-''')
+''', category='explosive life')
 
 Figure('acorn', '''
 - X - - - - -
 - - - X - - -
 X X - - X X X
-''')
+''', category='explosive life')
 
 # glider guns
 
@@ -163,7 +179,7 @@ X X - - - - - - - - X - - - X - X X - - - - X - X - - - - - - - - - - -
 - - - - - - - - - - X - - - - - X - - - - - - - X - - - - - - - - - - -
 - - - - - - - - - - - X - - - X - - - - - - - - - - - - - - - - - - - -
 - - - - - - - - - - - - X X - - - - - - - - - - - - - - - - - - - - - -
-''')
+''', category='guns')
 
 # my custom favorite
 
@@ -183,4 +199,4 @@ X - - X - - - - - X - - X
 - - - - - X - X - - - - -
 - - - - - X - X - - - - -
 - - - - - - X - - - - - -
-''')
+''', category='explosive life')

@@ -28,7 +28,7 @@ class Style(view.DefaultStyle):
 def main():
     args = argparser.parse_args()
     if args.list_figures:
-        print_figure_list(life.figures.list_figures())
+        print_figure_list()
         sys.exit(0)
     board = life.Board(args.code)
     try:
@@ -42,16 +42,18 @@ def main():
     v.run(200)
 
 
-def print_figure_list(figures):
-    for name, alt in figures:
-        print name,
-        if alt:
-            print '(',
-            for n in alt:
-                print n,
-            print ')'
-        if not alt:
-            print
+def print_figure_list():
+    categories = life.figures.list_figures_by_category()
+    for cat, fs in categories:
+        print '%s:' % cat
+        for f in fs:
+            alt = ''
+            if f.alt:
+                alt = ' (%s' % f.alt[0]
+                for a in f.alt[1:]:
+                    alt += ', %s' % a
+                alt += ')'
+            print '  %s%s' % (f.name, alt)
 
 
 if __name__ == '__main__':
