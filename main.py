@@ -17,26 +17,12 @@ argparser.add_argument('--figure', default='collision', help='initial figure on 
 argparser.add_argument('--list-figures', action='store_true', help='list availiable figures to use with --figure flag')
 
 
-class Style(object):
+class Style(view.DefaultStyle):
     def cell_color(self, state):
         if state == 0:
             return (255,255,255)
         elif state == 1:
             return (0,0,0)
-
-    def background_color(self):
-        return (255,255,255)
-
-    def grid_color(self, cell_size):
-        if  cell_size < 4:
-            return (255,255,255)
-        elif cell_size < 8:
-            return (245,245,245)
-        else:
-            return (230,230,230)
-
-    def text_color(self):
-        return (190,190,190)
 
 
 def main():
