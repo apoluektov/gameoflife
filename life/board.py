@@ -5,10 +5,23 @@
 
 # represents the game board
 class Board(object):
-    def __init__(self, code='B3/S23'):
-        self.alive = set()
-        self.nstep = 0
+
+    next_gen = 0
+    show_nascent = 1
+    show_dying = 2
+
+    def __init__(self, code='B3/S23', show_intermediate=False):
         self.born_counts, self.survive_counts = self._decode(code)
+        if show_intermediate:
+            self.stages = [self.next_gen, self.show_nascent, self.show_nascent | self.show_dying]
+        else:
+            self.stages = [self.next_gen]
+
+        self.alive = set()
+        self.nascent = set()
+        self.dying = set()
+        self.nstep = 0
+        self.stage_idx = 0
 
     def _decode(self, code):
         born, survives = code.split('/')
@@ -27,7 +40,20 @@ class Board(object):
 
         return born_counts, survive_counts
 
+    def stage(self):
+        return self.stages[self.stage_idx]
+
+    def _next_stage(self):
+        self.stage_idx += 1
+        self.stage_idx %= len(self.stages)
+        if self.stage() == self.next_gen:
+            self.alive = self.new_alive
+
     def cell_state(self, x, y):
+        if self.stage() & self.show_nascent and (x,y) in self.nascent:
+            return 3
+        if self.stage() & self.show_dying and (x,y) in self.dying:
+            return 2
         if (x,y) in self.alive:
             return 1
         else:
@@ -41,21 +67,29 @@ class Board(object):
 
     # calculates next generation
     def next_step(self):
+        if self.stage() == self.next_gen:
+            self.calculate_new_generation()
+        self._next_stage()
+
+    def calculate_new_generation(self):
         # 1: for all alive: find the next status
-        new_alive = set()
+        self.new_alive = set()
         for c in self.alive:
             n = self.number_of_adjacent_alive(*c)
             if n in self.survive_counts:
-                new_alive.add(c)
+                self.new_alive.add(c)
 
         # 2: for all adjacent to alive: find newborns
         for c in self.alive:
             for c2 in self.adjacent(*c):
                 n = self.number_of_adjacent_alive(*c2)
                 if n in self.born_counts:
-                    new_alive.add(c2)
+                    self.new_alive.add(c2)
 
-        self.alive = new_alive
+        self.nascent = self.new_alive - self.alive
+        self.dying = self.alive - self.new_alive
+
+        #self.alive = self.new_alive
         self.nstep += 1
 
     def step_count(self):

@@ -15,6 +15,7 @@ argparser.add_argument('--pause', action="store_true", help='start game in pause
 argparser.add_argument('--code', default='B3/S23', help='born/survives game code (default: B3/S23)')
 argparser.add_argument('--figure', default='collision', help='initial figure on the board')
 argparser.add_argument('--list-figures', action='store_true', help='list availiable figures to use with --figure flag')
+argparser.add_argument('--show-intermediate', action='store_true', help='show which generation are about to be born or die')
 
 
 class Style(view.DefaultStyle):
@@ -23,6 +24,10 @@ class Style(view.DefaultStyle):
             return (255,255,255)
         elif state == 1:
             return (0,0,0)
+        elif state == 2: # dying
+            return (127,0,0)
+        elif state == 3: # nascent
+            return (127,255,127)
 
 
 def main():
@@ -30,7 +35,7 @@ def main():
     if args.list_figures:
         print_figure_list()
         sys.exit(0)
-    board = life.Board(args.code)
+    board = life.Board(args.code, args.show_intermediate)
     try:
         life.figures.add_figure(board, args.figure)
     except KeyError as detail:
