@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2011-2016 Alexander Poluektov (alexander.poluektov@gmail.com)
 #
 # Use, modification and distribution are subject to the MIT license
@@ -7,16 +8,6 @@ import life
 import life.figures
 import view
 import sys
-
-import argparse
-
-argparser = argparse.ArgumentParser(description='Conway\'s Game of Life sumulation.')
-argparser.add_argument('--pause', action="store_true", help='start game in pause mode (default: false)')
-argparser.add_argument('--code', default='B3/S23', help='born/survives game code (default: B3/S23)')
-argparser.add_argument('--figure', default='collision', help='initial figure on the board')
-argparser.add_argument('--list-figures', action='store_true', help='list availiable figures to use with --figure flag')
-argparser.add_argument('--show-intermediate', action='store_true', help='show which generation are about to be born or die')
-
 
 class Style(view.DefaultStyle):
     def cell_color(self, state):
@@ -31,7 +22,7 @@ class Style(view.DefaultStyle):
 
 
 def main():
-    args = argparser.parse_args()
+    args = parse_args()
     if args.list_figures:
         print_figure_list()
         sys.exit(0)
@@ -45,6 +36,19 @@ def main():
     v = view.View(board, s, 640, 480, 3)
     v.pause = args.pause
     v.run(200)
+
+
+def parse_args():
+    import argparse
+
+    argparser = argparse.ArgumentParser(description='Conway\'s Game of Life sumulation.')
+    argparser.add_argument('--pause', action="store_true", help='start game in pause mode (default: false)')
+    argparser.add_argument('--code', default='B3/S23', help='born/survives game code (default: B3/S23)')
+    argparser.add_argument('--figure', default='collision', help='initial figure on the board')
+    argparser.add_argument('--list-figures', action='store_true', help='list availiable figures to use with --figure flag')
+    argparser.add_argument('--show-intermediate', action='store_true', help='show which generation are about to be born or die')
+
+    return argparser.parse_args()
 
 
 def print_figure_list():
