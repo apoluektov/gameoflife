@@ -3,9 +3,13 @@
 # Use, modification and distribution are subject to the MIT license
 # (See accompanying file MIT-LICENSE)
 
+
 # represents the game board
 class Board(object):
 
+    # stages
+    # each generation is divided in (potentially) several stages
+    # a stage defines what is to be shown on the board
     next_gen = 0
     show_nascent = 1
     show_dying = 2
@@ -65,7 +69,7 @@ class Board(object):
         elif st == 0:
             self.remove_cell(x, y)
 
-    # calculates next generation
+    # calculates the next generation
     def next_step(self):
         if self.stage() == self.next_gen:
             self.calculate_new_generation()
@@ -89,7 +93,6 @@ class Board(object):
         self.nascent = self.new_alive - self.alive
         self.dying = self.alive - self.new_alive
 
-        #self.alive = self.new_alive
         self.nstep += 1
 
     def step_count(self):
@@ -101,7 +104,7 @@ class Board(object):
     def remove_cell(self, x, y):
         if (x,y) in self.alive:
             self.alive.remove((x,y))
- 
+
     # for the given cell returns the list of adjacent cells
     def adjacent(self, x0, y0):
         return ((x,y) for x in range(x0-1,x0+2) for y in range(y0-1,y0+2) if (x,y) != (x0,y0))

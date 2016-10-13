@@ -40,13 +40,21 @@ class DefaultStyle(object):
         return (190,190,190)
 
 
+class Style(DefaultStyle):
+    def cell_color(self, state):
+        if state == 0:
+            return (255,0,0)
+        elif state == 1:
+            return (0,255,255)
+
+
 # responsible for drawing the board
 class View:
     _cell_sizes = [2,3,5,8,13,21,34]
 
-    # constructs new view using given board parameters
     # board parameter must model Board class shown above
-    def __init__(self, board, style, width, height, zoom):
+    # style parameter must model Style class shown above
+    def __init__(self, board, style, width=640, height=480, zoom=3, step_time_ms=200):
         pygame.init()
 
         self.board = board
@@ -63,8 +71,7 @@ class View:
         self.mouse_down = False
         self.quit_requested = False
 
-    def run(self, step_time_ms):
-        self.step_time_ms = step_time_ms
+    def run(self):
         t0 = pygame.time.get_ticks()
         while True:
             for event in pygame.event.get():
@@ -118,7 +125,6 @@ class View:
             self.resize_board(event.w, event.h)
 
 
-    # draws the board and the board
     def draw(self):
         self.draw_background()
         self.draw_board()

@@ -9,6 +9,7 @@ import life.figures
 import view
 import sys
 
+
 class Style(view.DefaultStyle):
     def cell_color(self, state):
         if state == 0:
@@ -32,8 +33,8 @@ def main():
     except KeyError as detail:
         print 'No such figure in catalog: %s' % detail
         sys.exit(1)
-    s = Style()
-    v = view.View(board, s, 640, 480, 3)
+    style = Style()
+    v = view.View(board, style)
     v.pause = args.pause
     v.run(200)
 
