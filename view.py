@@ -62,6 +62,7 @@ class View:
         self.width = width
         self.height = height
         self.zoom = clamp(zoom, 0, len(View._cell_sizes))
+        self.step_time_ms = step_time_ms
         self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
         self.font = pygame.font.Font(None, 36)
         s = self.cell_size()

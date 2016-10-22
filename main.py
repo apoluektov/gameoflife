@@ -36,7 +36,7 @@ def main():
     style = Style()
     v = view.View(board, style)
     v.pause = args.pause
-    v.run(200)
+    v.run()
 
 
 def parse_args():
