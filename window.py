@@ -49,7 +49,52 @@ class Style(DefaultStyle):
 
 
 class WindowListener(object):
-    pass
+    def __init__(self, window):
+        window.set_listener(self)
+        self.window = window
+
+    def on_key_down(self, key):
+        pass
+
+    def on_key_up(self, key):
+        pass
+
+    def on_mouse_button_down(self):
+        pass
+
+    def on_mouse_button_up(self):
+        pass
+
+    def on_mouse_wheel(self, direction):
+        pass
+
+    def on_mouse_drag(self, dx, dy):
+        pass
+
+
+class  DefaultWindowListener(WindowListener):
+    def __init__(self, window):
+        WindowListener.__init__(self, window)
+
+    def on_key_down(self, key):
+        import pygame
+        if key == pygame.K_ESCAPE:
+            self.window.quit_requested = True
+        elif key == pygame.K_p:
+            self.window.pause = not self.window.pause
+        elif key == pygame.K_s:
+            self.window.step_time_ms *= 1.5
+        elif key == pygame.K_f:
+            self.window.step_time_ms /= 1.5
+
+    def on_mouse_wheel(self, direction):
+        if direction == 1:
+            self.window.increase_cellsize()
+        elif direction == -1:
+            self.window.decrease_cellsize()
+
+    def on_mouse_drag(self, dx, dy):
+        self.window.drag_board(dx, dy)
 
 
 # responsible for drawing the board
@@ -101,39 +146,31 @@ class Window(object):
             self.quit_requested = True
         elif event.type == pygame.MOUSEMOTION:
             if self.mouse_down:
-                x, y = self.center
                 dx, dy = event.rel
-                self.center = x+dx, y+dy
+                self.listener.on_mouse_drag(dx, dy)
             self.cursor = event.pos
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 5:
-                self.increase_cellsize()
+                self.listener.on_mouse_wheel(1)
             elif event.button == 4:
-                self.decrease_cellsize()
+                self.listener.on_mouse_wheel(-1)
             elif event.button == 1:
                 self.mouse_down = True
+                self.listener.on_mouse_button_down()
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 self.mouse_down = False
+                self.listener.on_mouse_button_up()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                self.quit_requested = True
-            elif event.key == pygame.K_p:
-                self.pause = not self.pause
-            elif event.key == pygame.K_s:
-                self.step_time_ms *= 1.5
-            elif event.key == pygame.K_f:
-                self.step_time_ms /= 1.5
-            elif event.key == pygame.K_SPACE:
-                if self.pause:
-                    self.board.next_step()
-            elif event.key >= pygame.K_0 and event.key <= pygame.K_9:
-                state = event.key - pygame.K_0
-                if self.pause:
-                    self.set_cell_state_under_cursor(state)
+            self.listener.on_key_down(event.key)
+        elif event.type == pygame.KEYUP:
+            self.listener.on_key_up(event.key)
         elif event.type == pygame.VIDEORESIZE:
             self.resize_board(event.w, event.h)
 
+    def drag_board(self, dx, dy):
+        x, y = self.center
+        self.center = x + dx, y + dy
 
     def draw(self):
         self.draw_background()
@@ -217,11 +254,8 @@ class Window(object):
     def cell_size(self):
         return Window._cell_sizes[self.zoom]
 
-    def set_cell_state_under_cursor(self, st):
-        cell = self.screen_coords_to_cell(*self.cursor)
-        if cell:
-            gx, gy = cell
-            self.board.set_cell_state(gx, gy, st)
+    def cell_under_cursor(self):
+        return self.screen_coords_to_cell(*self.cursor)
 
 
 def clamp(v, minv, maxv):

@@ -22,11 +22,29 @@ class Style(window.DefaultStyle):
             return (127,255,127)
 
 
-class Game(object):
+class Game(window.DefaultWindowListener):
     def __init__(self, window, board, style):
-        self.window = window
+        super(Game, self).__init__(window)
         self.board = board
         self.style = style
+
+        # self.cell_under_cursor = None
+
+    def on_key_down(self, key):
+        import pygame
+
+        if pygame.K_0 <= key <= pygame.K_9:
+            state = key - pygame.K_0
+            if self.window.pause:
+                cell = self.window.cell_under_cursor()
+                if cell:
+                    x, y = cell
+                    self.board.set_cell_state(x, y, state)
+        elif key == pygame.K_SPACE:
+            if self.window.pause:
+                self.board.next_step()
+        else:
+            super(Game, self).on_key_down(key)
 
 
 def main():
@@ -43,8 +61,7 @@ def main():
     style = Style()
 
     v = window.Window(board, style)
-    game = Game(window, board, style)
-    v.set_listener(game)
+    game = Game(v, board, style)
     v.pause = args.pause
     v.run()
 
