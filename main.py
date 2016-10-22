@@ -22,6 +22,13 @@ class Style(window.DefaultStyle):
             return (127,255,127)
 
 
+class Game(object):
+    def __init__(self, window, board, style):
+        self.window = window
+        self.board = board
+        self.style = style
+
+
 def main():
     args = parse_args()
     if args.list_figures:
@@ -34,7 +41,10 @@ def main():
         print 'No such figure in catalog: %s' % detail
         sys.exit(1)
     style = Style()
+
     v = window.Window(board, style)
+    game = Game(window, board, style)
+    v.set_listener(game)
     v.pause = args.pause
     v.run()
 

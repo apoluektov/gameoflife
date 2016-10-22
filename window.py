@@ -48,6 +48,10 @@ class Style(DefaultStyle):
             return (0,255,255)
 
 
+class WindowListener(object):
+    pass
+
+
 # responsible for drawing the board
 class Window(object):
     _cell_sizes = [2,3,5,8,13,21,34]
@@ -71,6 +75,11 @@ class Window(object):
         self.pause = False
         self.mouse_down = False
         self.quit_requested = False
+        self.listener = None
+
+    # listener parameter must model WindowListener
+    def set_listener(self, listener):
+        self.listener = listener
 
     def run(self):
         t0 = pygame.time.get_ticks()
