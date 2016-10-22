@@ -6,11 +6,11 @@
 
 import life
 import life.figures
-import view
+import window
 import sys
 
 
-class Style(view.DefaultStyle):
+class Style(window.DefaultStyle):
     def cell_color(self, state):
         if state == 0:
             return (255,255,255)
@@ -34,7 +34,7 @@ def main():
         print 'No such figure in catalog: %s' % detail
         sys.exit(1)
     style = Style()
-    v = view.View(board, style)
+    v = window.Window(board, style)
     v.pause = args.pause
     v.run()
 

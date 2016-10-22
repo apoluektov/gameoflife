@@ -49,7 +49,7 @@ class Style(DefaultStyle):
 
 
 # responsible for drawing the board
-class View:
+class Window(object):
     _cell_sizes = [2,3,5,8,13,21,34]
 
     # board parameter must model Board class shown above
@@ -61,7 +61,7 @@ class View:
         self.style = style
         self.width = width
         self.height = height
-        self.zoom = clamp(zoom, 0, len(View._cell_sizes))
+        self.zoom = clamp(zoom, 0, len(Window._cell_sizes))
         self.step_time_ms = step_time_ms
         self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
         self.font = pygame.font.Font(None, 36)
@@ -200,13 +200,13 @@ class View:
         self.screen = pygame.display.set_mode((w,h), pygame.RESIZABLE)
 
     def increase_cellsize(self):
-        self.zoom = min(self.zoom + 1, len(View._cell_sizes)-1)
+        self.zoom = min(self.zoom + 1, len(Window._cell_sizes) - 1)
 
     def decrease_cellsize(self):
         self.zoom = max(self.zoom - 1, 0)
 
     def cell_size(self):
-        return View._cell_sizes[self.zoom]
+        return Window._cell_sizes[self.zoom]
 
     def set_cell_state_under_cursor(self, st):
         cell = self.screen_coords_to_cell(*self.cursor)
