@@ -166,7 +166,7 @@ class Window(object):
         elif event.type == pygame.KEYUP:
             self.listener.on_key_up(event.key)
         elif event.type == pygame.VIDEORESIZE:
-            self.resize_board(event.w, event.h)
+            self.resize(event.w, event.h)
 
     def drag_board(self, dx, dy):
         x, y = self.center
@@ -235,13 +235,13 @@ class Window(object):
         # (it is clamped by pygame to the view border)
         cx, cy = self.center
         s = self.cell_size()
-        if sx > 0 and sx < self.width-1 and sy > 0 and sy < self.height-1:
+        if 0 < sx < self.width-1 and 0 < sy < self.height - 1:
             gx, gy = (sx - cx) / s, (sy - cy) / s
             return gx, gy
         else:
             return None
 
-    def resize_board(self, w, h):
+    def resize(self, w, h):
         self.width, self.height = w, h
         self.screen = pygame.display.set_mode((w,h), pygame.RESIZABLE)
 
