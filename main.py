@@ -42,12 +42,12 @@ def main():
 def parse_args():
     import argparse
 
-    argparser = argparse.ArgumentParser(description='Conway\'s Game of Life sumulation.')
+    argparser = argparse.ArgumentParser(description='Conway\'s Game of Life simulation.')
     argparser.add_argument('--pause', action="store_true", help='start game in pause mode (default: false)')
     argparser.add_argument('--code', default='B3/S23', help='born/survives game code (default: B3/S23)')
     argparser.add_argument('--figure', default='collision', help='initial figure on the board')
-    argparser.add_argument('--list-figures', action='store_true', help='list availiable figures to use with --figure flag')
-    argparser.add_argument('--show-intermediate', action='store_true', help='show which generation are about to be born or die')
+    argparser.add_argument('--list-figures', action='store_true', help='list available figures to use with --figure flag')
+    argparser.add_argument('--show-intermediate', action='store_true', help='show which cells are about to be born or die')
 
     return argparser.parse_args()
 

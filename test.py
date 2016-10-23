@@ -4,11 +4,11 @@
 # (See accompanying file MIT-LICENSE)
 
 import unittest
-from life import Generation
+from life import Board
 
 class TestCase(unittest.TestCase):
     def testEmpty(self):
-        g = Generation()
+        g = Board()
         self.assertTrue(sorted(g.alive) == [])
         self.assertEquals(g.nstep, 0)
         g.next_step()
@@ -16,14 +16,14 @@ class TestCase(unittest.TestCase):
         self.assertEquals(g.nstep, 1)
 
     def testOne(self):
-        g = Generation()
+        g = Board()
         g.add_cell(1, 1)
         self.assertTrue(sorted(g.alive) == [(1,1)])
         g.next_step()
         self.assertTrue(sorted(g.alive) == [])
 
     def testTriple(self):
-        g = Generation()
+        g = Board()
         g.add_cell(1,1)
         g.add_cell(2,1)
         g.add_cell(1,2)
@@ -34,7 +34,7 @@ class TestCase(unittest.TestCase):
         self.assertTrue(sorted(g.alive) == [(1,1), (1,2), (2,1), (2,2)])
 
     def test3x3(self):
-        g = Generation()
+        g = Board()
         for c in [(x,y) for x in range(0,3) for y in range(0,3)]:
             g.add_cell(*c)
         self.assertEquals(g.nstep, 0)
