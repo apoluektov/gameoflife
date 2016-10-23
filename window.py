@@ -6,21 +6,6 @@
 import pygame
 
 
-class Board(object):
-    def cell_state(self, x, y):
-        return 0
-
-    # unsupported states should be ignored by the implementations
-    def set_cell_state(self, x, y, st):
-        pass
-
-    def next_step(self):
-        pass
-
-    def step_count(self):
-        return 0
-
-
 class WindowListener(object):
     def __init__(self, window):
         window.set_listener(self)
@@ -70,15 +55,13 @@ class  DefaultWindowListener(WindowListener):
         self.window.drag_board(dx, dy)
 
 
-# responsible for drawing the board
+# responsible for drawing the game content and for UI event dispatching
 class Window(object):
     _cell_sizes = [2,3,5,8,13,21,34]
 
-    # board parameter must model Board class shown above
-    def __init__(self, board, width=640, height=480, zoom=3, step_time_ms=200):
+    def __init__(self, width=640, height=480, zoom=3, step_time_ms=200):
         pygame.init()
 
-        self.board = board
         self.width = width
         self.height = height
         self.zoom = clamp(zoom, 0, len(Window._cell_sizes))

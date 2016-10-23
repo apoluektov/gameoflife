@@ -129,7 +129,7 @@ def main():
         sys.exit(1)
     style = Style()
 
-    v = window.Window(board)
+    v = window.Window()
     game = Game(v, board, style)
     v.pause = args.pause
     game.run()
