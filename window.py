@@ -126,21 +126,6 @@ class Window(object):
     def set_listener(self, listener):
         self.listener = listener
 
-    def run(self):
-        t0 = pygame.time.get_ticks()
-        while True:
-            for event in pygame.event.get():
-                self.process_event(event)
-
-            if self.quit_requested:
-                return
-
-            t = pygame.time.get_ticks()
-            if t - t0 >= self.step_time_ms and not self.pause:
-                self.board.next_step()
-                t0 = t
-            self.draw()
-
     def process_event(self, event):
         if event.type == pygame.QUIT:
             self.quit_requested = True
@@ -172,12 +157,7 @@ class Window(object):
         x, y = self.center
         self.center = x + dx, y + dy
 
-    def draw(self):
-        self.draw_background()
-        self.draw_board()
-        self.draw_grid()
-        self.draw_text()
-
+    def flip_display(self):
         pygame.display.flip()
 
     def draw_background(self):
@@ -200,13 +180,10 @@ class Window(object):
         for y in range(0, self.height/s + 1):
             pygame.draw.line(self.screen, color, (0, y*s + dy), (self.width, y*s + dy))
 
-    def draw_board(self):
+    def is_visible(self, x, y):
         c0x, c0y = self.screen_coords_to_cell(1, 1)
         c1x, c1y = self.screen_coords_to_cell(self.width - 2, self.height - 2)
-        for x in range(c0x, c1x + 1):
-            for y in range(c0y, c1y + 1):
-                color = self.style.cell_color(self.board.cell_state(x, y))
-                self.draw_cell(x, y, color)
+        return c0x <= x <= c1x and c0y <= y <= c1y
 
     def draw_cell(self, x, y, color):
         s = self.cell_size()
@@ -215,19 +192,9 @@ class Window(object):
         r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
         pygame.draw.rect(self.screen, color, r)
 
-    def draw_text(self):
-        nstep_text = self.font.render('{0:06}'.format(self.board.step_count()), 1, self.style.text_color())
-        x, y = nstep_text.get_size()
-        x, y = self.width - x - 10, 10
-        self.screen.blit(nstep_text, (x,y))
-
-        cell = self.screen_coords_to_cell(*self.cursor)
-        if cell:
-            gx, gy = cell
-            coords_text = self.font.render('{0:+04}:{1:+04}'.format(gx, gy), 1, self.style.text_color())
-            x, y = coords_text.get_size()
-            x, y = self.width - x - 10, y + 20
-            self.screen.blit(coords_text, (x,y))
+    def draw_text(self, text, px, py):
+        t = self.font.render(text, 1, self.style.text_color())
+        self.screen.blit(t, (px, py))
 
     def screen_coords_to_cell(self, sx, sy):
         # we exclude the border of the view

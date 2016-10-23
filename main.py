@@ -46,6 +46,54 @@ class Game(window.DefaultWindowListener):
         else:
             super(Game, self).on_key_down(key)
 
+    def run(self):
+        import pygame
+        t0 = pygame.time.get_ticks()
+        while True:
+            for event in pygame.event.get():
+                self.window.process_event(event)
+
+            if self.window.quit_requested:
+                return
+
+            t = pygame.time.get_ticks()
+            if t - t0 >= self.window.step_time_ms and not self.window.pause:
+                self.board.next_step()
+                t0 = t
+
+            self.draw()
+
+    def draw(self):
+        self.window.draw_background()
+        self.draw_cells()
+        self.window.draw_grid()
+        self.draw_text()
+
+        self.window.flip_display()
+
+    def draw_cells(self):
+        for (x,y) in self.board.alive:
+            if self.window.is_visible(x, y):
+                self.window.draw_cell(x, y, self.style.cell_color(1))
+        if self.board.stage() & self.board.show_nascent:
+            for (x,y) in self.board.nascent:
+                if self.window.is_visible(x, y):
+                    self.window.draw_cell(x, y, self.style.cell_color(3))
+        if self.board.stage() & self.board.show_dying:
+            if self.window.is_visible(x, y):
+                for (x,y) in self.board.dying:
+                    self.window.draw_cell(x, y, self.style.cell_color(2))
+
+    def draw_text(self):
+        nstep_text = '{0:06}'.format(self.board.step_count())
+        self.window.draw_text(nstep_text, 10, 10)
+
+        cell = self.window.cell_under_cursor()
+        if cell:
+            gx, gy = cell
+            coords_text = '{0:+04}:{1:+04}'.format(gx, gy)
+            self.window.draw_text(coords_text, 10, 40)
+
 
 def main():
     args = parse_args()
@@ -63,7 +111,7 @@ def main():
     v = window.Window(board, style)
     game = Game(v, board, style)
     v.pause = args.pause
-    v.run()
+    game.run()
 
 
 def parse_args():
