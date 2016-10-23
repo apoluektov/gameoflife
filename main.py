@@ -4,13 +4,29 @@
 # Use, modification and distribution are subject to the MIT license
 # (See accompanying file MIT-LICENSE)
 
-import life
-import life.figures
-import view
 import sys
 
+import life
+import life.figures
+import window
+from game import Game
 
-class Style(view.DefaultStyle):
+
+class Style(object):
+    def background_color(self):
+        return (255,255,255)
+
+    def grid_color(self, cell_size):
+        if cell_size < 4:
+            return (255,255,255)
+        elif cell_size < 8:
+            return (245,245,245)
+        else:
+            return (230,230,230)
+
+    def text_color(self):
+        return (190,190,190)
+
     def cell_color(self, state):
         if state == 0:
             return (255,255,255)
@@ -34,9 +50,11 @@ def main():
         print 'No such figure in catalog: %s' % detail
         sys.exit(1)
     style = Style()
-    v = view.View(board, style)
+
+    v = window.Window()
+    game = Game(v, board, style)
     v.pause = args.pause
-    v.run()
+    game.run()
 
 
 def parse_args():
