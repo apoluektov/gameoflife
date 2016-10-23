@@ -10,7 +10,21 @@ import window
 import sys
 
 
-class Style(window.DefaultStyle):
+class Style(object):
+    def background_color(self):
+        return (255,255,255)
+
+    def grid_color(self, cell_size):
+        if cell_size < 4:
+            return (255,255,255)
+        elif cell_size < 8:
+            return (245,245,245)
+        else:
+            return (230,230,230)
+
+    def text_color(self):
+        return (190,190,190)
+
     def cell_color(self, state):
         if state == 0:
             return (255,255,255)
@@ -64,9 +78,9 @@ class Game(window.DefaultWindowListener):
             self.draw()
 
     def draw(self):
-        self.window.draw_background()
+        self.window.draw_background(self.style.background_color())
         self.draw_cells()
-        self.window.draw_grid()
+        self.draw_grid()
         self.draw_text()
 
         self.window.flip_display()
@@ -84,15 +98,22 @@ class Game(window.DefaultWindowListener):
                 for (x,y) in self.board.dying:
                     self.window.draw_cell(x, y, self.style.cell_color(2))
 
+    def draw_grid(self):
+        color = self.style.grid_color(self.window.cell_size())
+        if color == self.style.background_color():
+            return
+
+        self.window.draw_grid(color)
+
     def draw_text(self):
         nstep_text = '{0:06}'.format(self.board.step_count())
-        self.window.draw_text(nstep_text, 10, 10)
+        self.window.draw_text(nstep_text, 10, 10, self.style.text_color())
 
         cell = self.window.cell_under_cursor()
         if cell:
             gx, gy = cell
             coords_text = '{0:+04}:{1:+04}'.format(gx, gy)
-            self.window.draw_text(coords_text, 10, 40)
+            self.window.draw_text(coords_text, 10, 40, self.style.text_color())
 
 
 def main():
@@ -108,7 +129,7 @@ def main():
         sys.exit(1)
     style = Style()
 
-    v = window.Window(board, style)
+    v = window.Window(board)
     game = Game(v, board, style)
     v.pause = args.pause
     game.run()

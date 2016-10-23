@@ -21,33 +21,6 @@ class Board(object):
         return 0
 
 
-class DefaultStyle(object):
-    # subclasses must define the method that returns color for the cell state:
-    # def cell_color(self, state)
-
-    def background_color(self):
-        return (255,255,255)
-
-    def grid_color(self, cell_size):
-        if  cell_size < 4:
-            return (255,255,255)
-        elif cell_size < 8:
-            return (245,245,245)
-        else:
-            return (230,230,230)
-
-    def text_color(self):
-        return (190,190,190)
-
-
-class Style(DefaultStyle):
-    def cell_color(self, state):
-        if state == 0:
-            return (255,0,0)
-        elif state == 1:
-            return (0,255,255)
-
-
 class WindowListener(object):
     def __init__(self, window):
         window.set_listener(self)
@@ -102,12 +75,10 @@ class Window(object):
     _cell_sizes = [2,3,5,8,13,21,34]
 
     # board parameter must model Board class shown above
-    # style parameter must model Style class shown above
-    def __init__(self, board, style, width=640, height=480, zoom=3, step_time_ms=200):
+    def __init__(self, board, width=640, height=480, zoom=3, step_time_ms=200):
         pygame.init()
 
         self.board = board
-        self.style = style
         self.width = width
         self.height = height
         self.zoom = clamp(zoom, 0, len(Window._cell_sizes))
@@ -160,16 +131,12 @@ class Window(object):
     def flip_display(self):
         pygame.display.flip()
 
-    def draw_background(self):
+    def draw_background(self, color):
         r = pygame.Rect(0, 0, self.width, self.height)
-        pygame.draw.rect(self.screen, self.style.background_color(), r)
+        pygame.draw.rect(self.screen, color, r)
 
-    def draw_grid(self):
+    def draw_grid(self, color):
         s = self.cell_size()
-
-        color = self.style.grid_color(self.cell_size())
-        if color == self.style.background_color():
-            return
 
         cx, cy = self.center
         dx, dy = cx % s, cy % s
@@ -192,8 +159,8 @@ class Window(object):
         r = pygame.Rect(cx + x*s+1, cy + y*s+1, rs, rs)
         pygame.draw.rect(self.screen, color, r)
 
-    def draw_text(self, text, px, py):
-        t = self.font.render(text, 1, self.style.text_color())
+    def draw_text(self, text, px, py, color):
+        t = self.font.render(text, 1, color)
         self.screen.blit(t, (px, py))
 
     def screen_coords_to_cell(self, sx, sy):
